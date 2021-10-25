@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
+const bcrypt = require("bcrypt");
+
 const assert = require("assert");
+
+const SALT_ROUNDS = 12;
 
 exports.connectToDb = async (mongo_uri) => {
   try {
@@ -10,6 +14,10 @@ exports.connectToDb = async (mongo_uri) => {
     });
     assert.ok(connection, "No errors thrown but connection not established.");
   } catch (error) {
-    throw new Error(error);
+    console.log(error);
   }
+};
+
+exports.hashPassword = async (plain) => {
+  return await bcrypt.hash(plain, SALT_ROUNDS);
 };
