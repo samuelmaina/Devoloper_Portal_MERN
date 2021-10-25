@@ -1,5 +1,5 @@
 exports.ensureEqual = (actual, expected) => {
-  expect(expected).toEqual(actual);
+  expect(actual).toEqual(expected);
 };
 
 exports.ensureTruthy = (predicate) => {

@@ -1,5 +1,6 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
+const assert = require("assert");
 
 const { connectToDb } = require("../../src/models/utils");
 
@@ -10,6 +11,7 @@ exports.includeSetUpAndTearDowns = () => {
     await connectToDb(process.env.MONGO_TEST_URI);
   });
   afterAll(async () => {
+    await this.clearDb();
     await mongoose.connection.close();
   });
 };
@@ -42,8 +44,6 @@ exports.clearDb = async () => {
       assert.strictEqual(count, 0, "deletion not complete");
     }
   } catch (error) {
-    throw new Error(error);
+    console.log(error);
   }
 };
-
-exports.clearDb = async () => {};

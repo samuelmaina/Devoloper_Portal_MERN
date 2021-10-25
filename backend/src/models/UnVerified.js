@@ -5,7 +5,7 @@ const { hashPassword } = require("./utils");
 const ranges = require("../constraints").auth;
 const Schema = mongoose.Schema;
 
-const UnAuth = new Schema({
+const UnVerified = new Schema({
   name: {
     type: String,
     required: true,
@@ -29,7 +29,7 @@ const UnAuth = new Schema({
   },
 });
 
-const { statics, methods } = UnAuth;
+const { statics, methods } = UnVerified;
 
 statics.createOne = async function (data) {
   const hashedPassword = await hashPassword(data.password);
@@ -42,4 +42,4 @@ statics.findOneByEmail = function (email) {
   return this.find({ email });
 };
 
-module.exports = mongoose.model("UnAuth", UnAuth);
+module.exports = mongoose.model("UnVerified", UnVerified);
