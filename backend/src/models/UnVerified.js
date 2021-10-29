@@ -27,6 +27,10 @@ const UnVerified = new Schema({
     maxlength: 80,
     minlength: 10,
   },
+  avatar: {
+    type: String,
+    required: true,
+  },
 });
 
 const { statics, methods } = UnVerified;
@@ -39,7 +43,7 @@ statics.createOne = async function (data) {
 };
 
 statics.findOneByEmail = function (email) {
-  return this.find({ email });
+  return this.findOne({ email });
 };
 
 module.exports = mongoose.model("UnVerified", UnVerified);

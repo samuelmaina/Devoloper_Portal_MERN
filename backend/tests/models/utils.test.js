@@ -4,7 +4,7 @@ const { ensureEqual } = require("../utils/matchers");
 
 const { connectToDb, hashPassword } = require("../../src/models/utils");
 
-describe("Utils Methods", () => {
+describe.skip("Utils Methods", () => {
   describe("connectTobb", () => {
     afterEach(async () => {
       await mongoose.connection.close();

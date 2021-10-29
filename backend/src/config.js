@@ -1,7 +1,9 @@
 require("dotenv").config();
-const envVaribles = process.env;
+const envVars = process.env;
 
 module.exports = {
-  PORT: envVaribles.PORT,
-  MONGO_URI: envVaribles.MONGO_URI,
+  PORT: envVars.PORT,
+  MONGO_URI: envVars.MONGO_URI,
+  TOKEN_VALIDITY_IN_HOURS: envVars.TOKEN_VALIDITY_IN_HOURS,
+  SENDGRID_API_KEY: envVars.SENDGRID_API_KEY,
 };

@@ -33,6 +33,15 @@ const Auth = new Schema(
       maxlength: 80,
       minlength: 10,
     },
+
+    avatar: {
+      type: String,
+      required: true,
+    },
+    joiningDate: {
+      type: Date,
+      default: Date.now(),
+    },
   },
   baseOptions
 );

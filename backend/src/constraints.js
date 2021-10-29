@@ -8,3 +8,13 @@ exports.auth = {
     maxlength: 50,
   },
 };
+
+exports.token = {
+  requester: {
+    maxlength: 50,
+    minlength: 2,
+  },
+  howLong: {
+    exact: 128,
+  },
+};

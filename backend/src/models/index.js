@@ -1,1 +1,2 @@
 exports.UnVerified = require("./UnVerified");
+exports.TokenGenerator = require("./TokenGenerator");

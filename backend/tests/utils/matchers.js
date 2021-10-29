@@ -9,3 +9,7 @@ exports.ensureTruthy = (predicate) => {
 exports.ensureFalsy = (predicate) => {
   expect(predicate).toBeFalsy();
 };
+
+exports.ensureNull = (value) => {
+  expect(value).toBeNull();
+};
