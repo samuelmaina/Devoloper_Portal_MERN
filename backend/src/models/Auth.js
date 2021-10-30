@@ -49,13 +49,7 @@ const Auth = new Schema(
 const { statics, methods } = Auth;
 
 statics.createOne = async function (data) {
-  const { name, password, email } = data;
-  const hashedPassword = await hashPassword(password);
-  const newMember = new this({
-    name,
-    email,
-    password: hashedPassword,
-  });
+  const newMember = new this(data);
   return await newMember.save();
 };
 module.exports = mongoose.model("Auth", Auth);
