@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 
 const Schema = mongoose.Schema;
 
-const ranges = require("../config/constraints").auth;
+const ranges = require("../constraints").auth;
 
 const baseOptions = {
   discrimatorKeys: "memberToAuth",
@@ -50,6 +50,11 @@ const { statics, methods } = Auth;
 
 statics.createOne = async function (data) {
   const newMember = new this(data);
-  return await newMember.save();
+  await newMember.save();
+  return newMember;
+};
+
+statics.findOneByEmail = function (email) {
+  return this.findOne({ email });
 };
 module.exports = mongoose.model("Auth", Auth);
