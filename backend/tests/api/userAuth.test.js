@@ -1,5 +1,5 @@
-const { TokenExpiredError } = require("jsonwebtoken");
 const request = require("supertest");
+const { BASE_URL, PORT } = require("../../src/config");
 const { UnVerified, User, TokenGenerator } = require("../../src/models");
 const { clearDb } = require("../models/utils");
 const { ensureNotNull } = require("../utils/matchers");
@@ -10,11 +10,12 @@ const {
   ensureHasStatusAndError,
   ensureHasStatusAndMessage,
 } = require("./utils");
-const PORT = 8080;
+
 describe(" User Auth Tests", () => {
   let app;
 
   beforeAll(async () => {
+    console.log("This is the port,", PORT);
     app = await startApp(PORT);
   });
   afterAll(async () => {
@@ -94,6 +95,24 @@ describe(" User Auth Tests", () => {
           201,
           "Sign Up successful.A link has been sent to your email. Click on it to verify your account."
         );
+      });
+    });
+
+    describe("should allow verfication of email", () => {
+      it.only("for the correct link", async () => {
+        //simulate previous sign up without the sending of emails.
+        const data = {
+          name: "John Doe",
+          email: "samuelmayna@gmail.com",
+          password: "HashedPa55word?",
+          avatar: "link/to/some/email",
+        };
+
+        await UnVerified.createOne(data);
+        const tokenDetails = await TokenGenerator.createOne(data.email);
+        const link = `${BASE_URL}/${tokenDetails.token}`;
+        const res = await makeGetRequest(link);
+        ensureHasStatusAndMessage(res, 201, "Email Verfication successful.");
       });
     });
   });

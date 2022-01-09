@@ -17,5 +17,6 @@ app.use(
 );
 
 app.use("/api", routes);
+app.use(notFound);
 
 module.exports = app;
