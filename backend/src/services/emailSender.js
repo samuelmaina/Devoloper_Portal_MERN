@@ -1,12 +1,11 @@
 const sgMail = require("@sendgrid/mail");
-const { SENDGRID_API_KEY } = require("../config");
+const { SENDGRID_API_KEY, EMAIL_SENDER } = require("../config");
 sgMail.setApiKey(SENDGRID_API_KEY);
-
-const sender = "samuelmainaonlineshop@gmail.com";
 
 module.exports = async (msg) => {
   try {
-    msg.from = sender;
+    console.log("This is the email sender", EMAIL_SENDER);
+    msg.from = EMAIL_SENDER;
     const result = await sgMail.send(msg);
     if (result) {
       console.log("the email was sent succcessfully.");

@@ -25,5 +25,13 @@ exports.closeApp = async () => {
 
 exports.ensureHasStatusAndError = (res, status, error) => {
   ensureEqual(res.body.error, error);
-  ensureEqual(res.status, status);
+  ensureHasStatus(res, status);
 };
+
+exports.ensureHasStatusAndMessage = (res, status, msg) => {
+  ensureEqual(res.body.message, msg);
+  ensureHasStatus(res, status);
+};
+function ensureHasStatus(res, status) {
+  ensureEqual(res.status, status);
+}

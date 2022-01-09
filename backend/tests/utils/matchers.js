@@ -13,3 +13,7 @@ exports.ensureFalsy = (predicate) => {
 exports.ensureNull = (value) => {
   expect(value).toBeNull();
 };
+exports.ensureNotNull = (value) => {
+  expect(value).not.toBeNull();
+  expect(value).not.toBeUndefined();
+};

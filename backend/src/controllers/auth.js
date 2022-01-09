@@ -1,3 +1,4 @@
+const { BASE_URL } = require("../config");
 const { UnVerified, User, TokenGenerator } = require("../models");
 const { emailSender } = require("../services");
 const { Responder } = require("../utils");
@@ -8,7 +9,7 @@ exports.signUp = async (req, res, next) => {
     let existingEmail;
     const { body, params } = req;
     const type = params.type;
-    const { email } = body;
+    const { email, name } = body;
     existingEmail = await UnVerified.findOneByEmail(email);
     if (existingEmail) {
       return responder
@@ -26,7 +27,23 @@ exports.signUp = async (req, res, next) => {
         .send();
     }
     const tokenDetails = await TokenGenerator.createOne(email);
-    await emailSender();
+    const emailBody = {
+      to: email,
+      subject: "Please confirm your account",
+      html: `<h1>Email Confirmation</h1>
+          <h2>Hello ${name}</h2>
+          <p>Thank you for subscribing. Please confirm your email by clicking on the following link</p>
+          <a href=${BASE_URL}/${tokenDetails.token}> Click here</a>
+          </div>`,
+    };
+
+    await emailSender(emailBody);
+    return responder
+      .withStatusCode(201)
+      .withMessage(
+        "Sign Up successful.A link has been sent to your email. Click on it to verify your account."
+      )
+      .send();
   } catch (error) {
     next(error);
   }
