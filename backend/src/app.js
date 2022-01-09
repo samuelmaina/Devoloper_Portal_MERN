@@ -1,4 +1,5 @@
 const express = require("express");
+const { notFound } = require("./middlewares");
 
 const app = express();
 
@@ -17,6 +18,6 @@ app.use(
 );
 
 app.use("/api", routes);
-app.use(notFound);
+notFound(app);
 
 module.exports = app;

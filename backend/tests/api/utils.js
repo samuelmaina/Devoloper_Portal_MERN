@@ -1,3 +1,4 @@
+const request = require("supertest");
 const app = require("../../src/app");
 const { connectToTestDb, disconnectFromTestDb } = require("../models/utils");
 const { ensureEqual } = require("../utils/matchers");

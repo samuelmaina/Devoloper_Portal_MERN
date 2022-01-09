@@ -1,4 +1,3 @@
-const request = require("supertest");
 const { BASE_URL, PORT } = require("../../src/config");
 const { UnVerified, User, TokenGenerator } = require("../../src/models");
 const { clearDb } = require("../models/utils");
@@ -25,8 +24,8 @@ describe("App tests", () => {
     await clearDb();
   });
 
-  it("for unverified account", async () => {
-    const res = await requester.makeGetRequest("non/existing/url");
-    ensureHasStatusAndError(res, 404, "Page not found");
+  it("Should notify of non-existing url", async () => {
+    const res = await requester.makeGetRequest("/non/existing/url");
+    ensureHasStatusAndMessage(res, 404, "Page not found.");
   });
 });
