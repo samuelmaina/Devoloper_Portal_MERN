@@ -1,12 +1,12 @@
 const router = require("express").Router();
 
-const user = require("./user");
+const auth = require("./auth");
 
 const profile = require("./profile");
 
 const post = require("./posts");
 
-router.use("/user", user);
+router.use("/auth", auth);
 router.use("/post", post);
 router.use("/profile", profile);
 module.exports = router;

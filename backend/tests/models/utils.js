@@ -4,15 +4,20 @@ const assert = require("assert");
 
 const { connectToDb } = require("../../src/models/utils");
 
-const Models = require("../../src/models");
+exports.connectToTestDb = async () => {
+  await connectToDb(process.env.MONGO_TEST_URI);
+};
 
+exports.disconnectFromTestDb = async () => {
+  // await this.clearDb();
+  await mongoose.connection.close();
+};
 exports.includeSetUpAndTearDowns = () => {
   beforeAll(async () => {
-    await connectToDb(process.env.MONGO_TEST_URI);
+    await this.connectToTestDb();
   });
   afterAll(async () => {
-    await this.clearDb();
-    await mongoose.connection.close();
+    await this.disconnectFromTestDb();
   });
 };
 
@@ -31,8 +36,9 @@ exports.clearModel = async (Model) => {
 
 exports.clearDb = async () => {
   try {
-    for (const ModelName in Models) {
-      const Model = Models[ModelName];
+    const Models = mongoose.modelNames();
+    for (const ModelName of Models) {
+      const Model = mongoose.model(ModelName);
       const getNoOfDocs = async () => {
         return await Model.find().countDocuments();
       };

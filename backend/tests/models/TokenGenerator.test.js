@@ -1,22 +1,22 @@
-const { UnVerified, TokenGenerator } = require("../../src/models");
-const { ensureEqual, ensureTruthy, ensureNull } = require("../utils/matchers");
-
-const bcrypt = require("bcrypt");
+const { TokenGenerator } = require("../../src/models");
+const { ensureEqual, ensureNull } = require("../utils/matchers");
 
 const { includeSetUpAndTearDowns, clearDb } = require("./utils");
 const { token } = require("../../src/constraints");
 const { TOKEN_VALIDITY_IN_HOURS } = require("../../src/config");
 
-describe.skip("Token Generator", () => {
+describe("Token Generator", () => {
   includeSetUpAndTearDowns();
-  afterEach(async () => {
-    await clearDb();
-  });
+  // afterEach(async () => {
+  //   await clearDb();
+  // });
   describe("Statics", () => {
-    describe("createOne", () => {
+    describe.only("createOne", () => {
       it("should create one doc for correct data", async () => {
         const email = "unique@email.com";
         const doc = await TokenGenerator.createOne(email);
+
+        console.log(doc);
         ensureEqual(doc.requester, email);
         ensureEqual(doc.token.length, token.howLong.exact);
       });
@@ -31,7 +31,6 @@ describe.skip("Token Generator", () => {
           email,
           token
         );
-        console.log(found);
         ensureEqual(found.requester, email);
       });
 

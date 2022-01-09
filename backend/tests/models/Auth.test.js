@@ -2,7 +2,7 @@ const Auth = require("../../src/models/Auth");
 const { ensureEqual } = require("../utils/matchers");
 const { includeSetUpAndTearDowns, clearDb } = require("./utils");
 
-describe("Auth Model", () => {
+describe.skip("Auth Model", () => {
   includeSetUpAndTearDowns();
   afterEach(async () => {
     await clearDb();
@@ -16,10 +16,41 @@ describe("Auth Model", () => {
     };
     const doc = await Auth.createOne(data);
 
-    ensureEqual(doc.name, data.name);
-    ensureEqual(doc.email, data.email);
+    ensureDocHasTheRightData(doc, data);
+  });
+  it("findOneByEmail should return a doc with the given email", async () => {
+    const data1 = {
+      name: "Jonn Doe",
+      email: "test1@test.com",
+      password: "HashedPa55word?",
+      avatar: "/path/to/email/avatar",
+    };
+    const data2 = {
+      name: "Jonn Doe",
+      email: "test2@test.com",
+      password: "HashedPa55word?",
+      avatar: "/path/to/email/avatar",
+    };
 
-    //the password won't be hashed since It was hashed previously.
-    ensureEqual(doc.password, data.password);
-  }, 20000);
+    const data3 = {
+      name: "Jonn Doe",
+      email: "test3@test.com",
+      password: "HashedPa55word?",
+      avatar: "/path/to/email/avatar",
+    };
+    await Auth.createOne(data1);
+    await Auth.createOne(data2);
+    await Auth.createOne(data3);
+
+    const found = await Auth.findOneByEmail(data3.email);
+    ensureDocHasTheRightData(found, data3);
+  });
 });
+function ensureDocHasTheRightData(doc, expected) {
+  ensureEqual(doc.name, expected.name);
+  ensureEqual(doc.email, expected.email);
+
+  //the password won't be hashed since It was hashed previously, hence they should be the same.
+  ensureEqual(doc.password, expected.password);
+  ensureEqual(doc.avatar, expected.avatar);
+}

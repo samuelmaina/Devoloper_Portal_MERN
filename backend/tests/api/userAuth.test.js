@@ -1,10 +1,10 @@
 const request = require("supertest");
 const { UnVerified, User } = require("../../src/models");
-const Auth = require("../../src/models/Auth");
+const { clearDb } = require("../models/utils");
 
 const { closeApp, startApp, ensureHasStatusAndError } = require("./utils");
 const PORT = 8080;
-describe(" User Auth Tests", () => {
+describe.skip(" User Auth Tests", () => {
   let app;
 
   beforeAll(async () => {
@@ -13,8 +13,11 @@ describe(" User Auth Tests", () => {
   afterAll(async () => {
     await closeApp();
   });
+  afterEach(async () => {
+    await clearDb();
+  });
   describe("Sign Up", () => {
-    const url = "/api/auth/user/sign-up";
+    const url = "/api/auth/sign-up/user";
     describe("should refuse when an email is taken", () => {
       it("for unverified account", async () => {
         const data = {
@@ -30,7 +33,7 @@ describe(" User Auth Tests", () => {
         ensureHasStatusAndError(
           res,
           401,
-          "Email already Taken. Please try another one."
+          "Email not verified. Please verify Email by clicking the link sent to your inbox."
         );
       });
 
@@ -47,7 +50,7 @@ describe(" User Auth Tests", () => {
         ensureHasStatusAndError(
           res,
           401,
-          "Email already Taken. Please try another one."
+          "Email already taken. Please try another one."
         );
       });
     });

@@ -25,6 +25,13 @@ const TokenGenerator = new Schema({
     min: Date.now(),
   },
 });
+
+TokenGenerator.index(
+  {
+    expiryTime: 1,
+  },
+  { expireAfterSeconds: 10 }
+);
 const { statics, methods } = TokenGenerator;
 
 statics.createOne = async function (requester) {
