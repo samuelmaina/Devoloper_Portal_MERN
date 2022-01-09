@@ -4,7 +4,7 @@ const { clearDb } = require("../models/utils");
 
 const { closeApp, startApp, ensureHasStatusAndError } = require("./utils");
 const PORT = 8080;
-describe.skip(" User Auth Tests", () => {
+describe(" User Auth Tests", () => {
   let app;
 
   beforeAll(async () => {
