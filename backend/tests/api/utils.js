@@ -35,3 +35,17 @@ exports.ensureHasStatusAndMessage = (res, status, msg) => {
 function ensureHasStatus(res, status) {
   ensureEqual(res.status, status);
 }
+
+class Requester {
+  constructor(app) {
+    this.app = app;
+  }
+  async makePostRequest(url, body) {
+    return await request(this.app).post(url).send(body);
+  }
+  async makeGetRequest(url) {
+    return await request(this.app).get(url);
+  }
+}
+
+exports.Requester = Requester;

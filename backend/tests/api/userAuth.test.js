@@ -9,14 +9,15 @@ const {
   startApp,
   ensureHasStatusAndError,
   ensureHasStatusAndMessage,
+  Requester,
 } = require("./utils");
 
-describe(" User Auth Tests", () => {
-  let app;
+describe.skip(" User Auth Tests", () => {
+  let requester;
 
   beforeAll(async () => {
-    console.log("This is the port,", PORT);
-    app = await startApp(PORT);
+    const app = await startApp(PORT);
+    requester = new Requester(app);
   });
   afterAll(async () => {
     await closeApp();
@@ -36,7 +37,7 @@ describe(" User Auth Tests", () => {
         };
         await UnVerified.createOne(data);
 
-        const res = await makePostRequest(url, data);
+        const res = await requester.makePostRequest(url, data);
 
         ensureHasStatusAndError(
           res,
@@ -54,7 +55,7 @@ describe(" User Auth Tests", () => {
         };
 
         await User.createOne(data);
-        const res = await makePostRequest(url, data);
+        const res = await requester.makePostRequest(url, data);
         ensureHasStatusAndError(
           res,
           401,
@@ -70,7 +71,7 @@ describe(" User Auth Tests", () => {
           password: "pa55word?",
           avatar: "link/to/some/email",
         };
-        await makePostRequest(url, data);
+        await requester.makePostRequest(url, data);
 
         //ensure that the token is generated.
         const tokenDetails = await TokenGenerator.findOne({
@@ -89,7 +90,7 @@ describe(" User Auth Tests", () => {
         };
 
         //if error is not thrown , the email has been sent.
-        const res = await makePostRequest(url, data);
+        const res = await requester.makePostRequest(url, data);
         ensureHasStatusAndMessage(
           res,
           201,
@@ -111,15 +112,9 @@ describe(" User Auth Tests", () => {
         await UnVerified.createOne(data);
         const tokenDetails = await TokenGenerator.createOne(data.email);
         const link = `${BASE_URL}/${tokenDetails.token}`;
-        const res = await makeGetRequest(link);
+        const res = await requester.makeGetRequest(link);
         ensureHasStatusAndMessage(res, 201, "Email Verfication successful.");
       });
     });
   });
-  async function makePostRequest(url, body) {
-    return await request(app).post(url).send(body);
-  }
-  async function makeGetRequest(url) {
-    return await request(app).get(url);
-  }
 });
