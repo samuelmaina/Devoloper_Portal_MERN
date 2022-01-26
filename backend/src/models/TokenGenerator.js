@@ -48,9 +48,8 @@ statics.createOne = async function (requester) {
   return tokenDetails;
 };
 
-statics.findTokenDetailsByToken = async function (requester, token) {
+statics.findTokenDetailsByToken = async function (token) {
   return await this.findOne({
-    requester,
     token,
     expiryTime: { $gt: Date.now() },
   });
