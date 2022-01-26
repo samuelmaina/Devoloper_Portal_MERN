@@ -1,5 +1,5 @@
 const express = require("express");
-const { notFound } = require("./middlewares");
+const { notFound, errorHandler } = require("./middlewares");
 
 const app = express();
 
@@ -19,5 +19,6 @@ app.use(
 
 app.use("/api", routes);
 notFound(app);
+errorHandler(app);
 
 module.exports = app;
