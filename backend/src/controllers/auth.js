@@ -1,5 +1,5 @@
 const { BASE_URL } = require("../config");
-const { UnVerified, User, TokenGenerator } = require("../models");
+const { UnVerified, User, TokenGenerator, Auth } = require("../models");
 const { emailSender } = require("../services");
 const { Responder } = require("../utils");
 
@@ -56,6 +56,11 @@ exports.verifyEmail = async (req, res, next) => {
 
     const tokenDetails = await TokenGenerator.findTokenDetailsByToken(token);
     if (tokenDetails) {
+      const email = tokenDetails.requester;
+      const details = await UnVerified.findOneByEmail(email);
+
+      await Auth.createOne(details);
+      await details.delete();
       await tokenDetails.delete();
       return responder
         .withStatusCode(201)
@@ -66,6 +71,40 @@ exports.verifyEmail = async (req, res, next) => {
         .withStatusCode(403)
         .withMessage("Email verfication failed.")
         .send();
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.postLogin = async function (req, res, next) {
+  try {
+    const responder = new Responder(res);
+    const { loginIn } = auth;
+    const { body, params } = req;
+    const type = params.type;
+    const { email, password } = body;
+
+    const details = await findOneWithCredentialsByType(type, email, password);
+    if (details) {
+      const payload = {
+        id: details.id,
+      };
+      const cb = (err, token) => {
+        try {
+          if (err) return next(err);
+          const data = {
+            success: true,
+            auth: type,
+            token: "Bearer " + token,
+          };
+          responder.withStatusCode(201).withData(data).send();
+        } catch (error) {
+          next(error);
+        }
+      };
+      return loginIn(payload, cb);
+    }
+    responder.withStatusCode(401).withError("Invalid Email or Password").send();
   } catch (error) {
     next(error);
   }
