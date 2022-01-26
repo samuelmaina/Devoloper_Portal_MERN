@@ -49,12 +49,22 @@ const Auth = new Schema(
 const { statics, methods } = Auth;
 
 statics.createOne = async function (data) {
-  const newMember = new this(data);
+  const { name, email, password, avatar } = data;
+  let newMember = new this({
+    name,
+    email,
+    password,
+    avatar,
+  });
   await newMember.save();
   return newMember;
 };
 
 statics.findOneByEmail = function (email) {
   return this.findOne({ email });
+};
+
+methods.delete = async function () {
+  return await this.deleteOne();
 };
 module.exports = mongoose.model("Auth", Auth);
