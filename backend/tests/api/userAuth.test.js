@@ -2,7 +2,7 @@ const request = require("supertest");
 const { BASE_URL, PORT } = require("../../src/config");
 const { UnVerified, User, TokenGenerator } = require("../../src/models");
 const { clearDb } = require("../models/utils");
-const { ensureNotNull } = require("../utils/matchers");
+const { ensureNotNull, ensureNull } = require("../utils/matchers");
 
 const {
   closeApp,
@@ -12,7 +12,7 @@ const {
   Requester,
 } = require("./utils");
 
-describe.skip(" User Auth Tests", () => {
+describe(" User Auth Tests", () => {
   let requester;
 
   beforeAll(async () => {
@@ -111,8 +111,15 @@ describe.skip(" User Auth Tests", () => {
 
         await UnVerified.createOne(data);
         const tokenDetails = await TokenGenerator.createOne(data.email);
-        const link = `${BASE_URL}/${tokenDetails.token}`;
+        const link = `/${BASE_URL}/${tokenDetails.token}`;
         const res = await requester.makeGetRequest(link);
+
+        //ensure that the token is deleted from the database.
+        const savedToken = await TokenGenerator.findOne({
+          requester: data.email,
+        });
+        ensureNull(savedToken);
+
         ensureHasStatusAndMessage(res, 201, "Email Verfication successful.");
       });
     });
