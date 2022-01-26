@@ -33,7 +33,7 @@ exports.signUp = async (req, res, next) => {
       html: `<h1>Email Confirmation</h1>
           <h2>Hello ${name}</h2>
           <p>Thank you for joing the online shop. Please confirm your email by clicking on the following link</p>
-          <a href=${BASE_URL}/${tokenDetails.token}> Click here</a>
+          <a href=${BASE_URL}/verify/${tokenDetails.token}> Click here</a>
           </div>`,
     };
 
@@ -44,6 +44,28 @@ exports.signUp = async (req, res, next) => {
         "Sign Up successful.A link has been sent to your email. Click on it to verify your account."
       )
       .send();
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.verifyEmail = async (req, res, next) => {
+  try {
+    const responder = new Responder(res);
+    const { token } = req.params;
+
+    const tokenDetails = await TokenGenerator.findTokenDetailsByToken(token);
+    if (tokenDetails) {
+      await tokenDetails.delete();
+      return responder
+        .withStatusCode(201)
+        .withMessage("Email verfication successful.")
+        .send();
+    } else
+      return responder
+        .withStatusCode(403)
+        .withMessage("Email verfication failed.")
+        .send();
   } catch (error) {
     next(error);
   }
