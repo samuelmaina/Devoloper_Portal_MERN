@@ -130,6 +130,7 @@ describe(" User Auth Tests", () => {
         ensureNotNull(saved);
         ensureEqual(saved.email, data.email);
 
+        //ensure that the  data is deleted from the unverified model.
         const retrieved = await UnVerified.findOne({ email: data.email });
         ensureNull(retrieved);
       });
