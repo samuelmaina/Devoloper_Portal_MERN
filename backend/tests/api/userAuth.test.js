@@ -1,8 +1,8 @@
 const request = require("supertest");
 const { BASE_URL, PORT } = require("../../src/config");
-const { UnVerified, User, TokenGenerator } = require("../../src/models");
+const { UnVerified, User, TokenGenerator, Auth } = require("../../src/models");
 const { clearDb } = require("../models/utils");
-const { ensureNotNull, ensureNull } = require("../utils/matchers");
+const { ensureNotNull, ensureNull, ensureEqual } = require("../utils/matchers");
 
 const {
   closeApp,
@@ -102,7 +102,7 @@ describe(" User Auth Tests", () => {
     });
 
     describe("should allow verfication of email", () => {
-      it("for the correct link", async () => {
+      it.only("for the correct link", async () => {
         //simulate previous sign up without the sending of emails.
         const data = {
           name: "John Doe",
@@ -123,9 +123,18 @@ describe(" User Auth Tests", () => {
           requester: data.email,
         });
         ensureNull(savedToken);
+
+        const saved = await Auth.findOne({ email: data.email });
+
+        //ensure that the data is saved to the right channel.
+        ensureNotNull(saved);
+        ensureEqual(saved.email, data.email);
+
+        const retrieved = await UnVerified.findOne({ email: data.email });
+        ensureNull(retrieved);
       });
 
-      it.only("for the incorrect  link", async () => {
+      it("for the incorrect  link", async () => {
         const token =
           "sjdkfjdkjfkdjfdfkldjfkldjflkdjlfkjdklfjdklfjdkljfkljlkfd";
         const link = base + `verify/${token}`;
@@ -138,10 +147,10 @@ describe(" User Auth Tests", () => {
     });
   });
 
-  describe("Sign Up", () => {
-    const url = base + "sign-up/user";
-    describe("should refuse when an email is taken", () => {
-      it("for unverified account", async () => {
+  describe("Login ", () => {
+    const url = base + "log-in/user";
+    describe("for correct credentials ", () => {
+      it(" ", async () => {
         const data = {
           name: "John Doe",
           email: "example",
@@ -156,23 +165,6 @@ describe(" User Auth Tests", () => {
           res,
           401,
           "Email not verified. Please verify Email by clicking the link sent to your inbox."
-        );
-      });
-
-      it("for existing account", async () => {
-        const data = {
-          name: "John Doe",
-          email: "example",
-          password: "HashedPa55word?",
-          avatar: "link/to/some/email",
-        };
-
-        await User.createOne(data);
-        const res = await requester.makePostRequest(url, data);
-        ensureHasStatusAndError(
-          res,
-          401,
-          "Email already taken. Please try another one."
         );
       });
     });
