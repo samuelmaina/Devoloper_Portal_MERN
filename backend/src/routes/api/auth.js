@@ -1,8 +1,10 @@
 const { auth } = require("../../controllers");
 
+const { signUp, verifyEmail } = auth;
+
 const router = require("express").Router();
 
-router.route("/sign-up/:type").post(auth.signUp);
-router.route("/verify/:token").get(auth.verifyEmail);
+router.route("/sign-up/:type").post(signUp);
+router.route("/verify/:token").get(verifyEmail);
 
 module.exports = router;
