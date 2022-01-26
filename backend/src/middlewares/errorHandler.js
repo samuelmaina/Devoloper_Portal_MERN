@@ -6,7 +6,7 @@ module.exports = (app) => {
       console.error(error);
       return new Responder(res)
         .withStatusCode(500)
-        .withMessage("Internal Server Error")
+        .withMessage("Internal Server Error!")
         .send();
     } catch (err) {
       next(error);
