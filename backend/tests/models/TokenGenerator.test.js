@@ -5,13 +5,13 @@ const { includeSetUpAndTearDowns, clearDb } = require("./utils");
 const { token } = require("../../src/constraints");
 const { TOKEN_VALIDITY_IN_HOURS } = require("../../src/config");
 
-describe("Token Generator", () => {
+describe.skip("Token Generator", () => {
   includeSetUpAndTearDowns();
   // afterEach(async () => {
   //   await clearDb();
   // });
   describe("Statics", () => {
-    describe.only("createOne", () => {
+    describe("createOne", () => {
       it("should create one doc for correct data", async () => {
         const email = "unique@email.com";
         const doc = await TokenGenerator.createOne(email);
@@ -27,10 +27,7 @@ describe("Token Generator", () => {
         const email = "unique@email.com";
         const doc = await TokenGenerator.createOne(email);
         const token = doc.token;
-        const found = await TokenGenerator.findTokenDetailsByToken(
-          email,
-          token
-        );
+        const found = await TokenGenerator.findTokenDetailsByToken(token);
         ensureEqual(found.requester, email);
       });
 
@@ -44,10 +41,7 @@ describe("Token Generator", () => {
           doc.expiryTime - (TOKEN_VALIDITY_IN_HOURS * 3600 * 1000 + 20);
         await doc.save();
         const token = doc.token;
-        const found = await TokenGenerator.findTokenDetailsByToken(
-          email,
-          token
-        );
+        const found = await TokenGenerator.findTokenDetailsByToken(token);
         ensureNull(found);
       });
 
@@ -56,10 +50,7 @@ describe("Token Generator", () => {
           const email = "unique@email.com";
           const doc = await TokenGenerator.createOne(email);
           const token = "somerandomtoken134309343534343434343";
-          const found = await TokenGenerator.findTokenDetailsByToken(
-            email,
-            token
-          );
+          const found = await TokenGenerator.findTokenDetailsByToken(token);
           ensureNull(found);
         });
 
@@ -68,10 +59,7 @@ describe("Token Generator", () => {
           const doc = await TokenGenerator.createOne(email);
           const token = doc.token;
           const requester = "someemail@email.com";
-          const found = await TokenGenerator.findTokenDetailsByToken(
-            requester,
-            token
-          );
+          const found = await TokenGenerator.findTokenDetailsByToken(token);
           ensureNull(found);
         });
 
@@ -80,10 +68,7 @@ describe("Token Generator", () => {
           const doc = await TokenGenerator.createOne(email);
           const token = "somerandomrequester";
           const requester = "someemail@email.com";
-          const found = await TokenGenerator.findTokenDetailsByToken(
-            requester,
-            token
-          );
+          const found = await TokenGenerator.findTokenDetailsByToken(token);
           ensureNull(found);
         });
       });
