@@ -36,6 +36,7 @@ describe(" User Auth Tests", () => {
           email: "example",
           password: "pa55word?",
           avatar: "link/to/some/email",
+          type: "user",
         };
         await UnVerified.createOne(data);
 
@@ -99,10 +100,27 @@ describe(" User Auth Tests", () => {
           "Sign Up successful.A link has been sent to your email. Click on it to verify your account."
         );
       });
+
+      it.only("ensure that the that the data is saved in the UnVerified Database. ", async () => {
+        const data = {
+          name: "John Doe",
+          email: "samuelmayna@gmail.com",
+          password: "pa55word?",
+          avatar: "link/to/some/email",
+        };
+
+        await requester.makePostRequest(url, data);
+
+        const found = await UnVerified.findOne({ email: data.email });
+
+        ensureNotNull(found);
+        ensureEqual(found.name, data.name);
+        ensureEqual(found.email, data.email);
+      });
     });
 
     describe("should allow verfication of email", () => {
-      it.only("for the correct link", async () => {
+      it("for the correct link", async () => {
         //simulate previous sign up without the sending of emails.
         const data = {
           name: "John Doe",
@@ -148,7 +166,7 @@ describe(" User Auth Tests", () => {
     });
   });
 
-  describe("Login ", () => {
+  describe.skip("Login ", () => {
     const url = base + "log-in/user";
     describe("for correct credentials ", () => {
       it(" ", async () => {
