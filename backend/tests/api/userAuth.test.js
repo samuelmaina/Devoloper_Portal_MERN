@@ -1,14 +1,21 @@
-const request = require("supertest");
-const { BASE_URL, PORT } = require("../../src/config");
+const { PORT } = require("../../src/config");
+const bcrypt = require("bcrypt");
 const { UnVerified, User, TokenGenerator, Auth } = require("../../src/models");
 const { clearDb } = require("../models/utils");
-const { ensureNotNull, ensureNull, ensureEqual } = require("../utils/matchers");
+const {
+  ensureNotNull,
+  ensureNull,
+  ensureEqual,
+  ensureValueGreaterThanOrEqual,
+} = require("../utils/matchers");
 
 const {
   closeApp,
   startApp,
   ensureHasStatusAndError,
   ensureHasStatusAndMessage,
+  ensureResHasStatusCodeAndFieldData,
+  ensureResHasStatusCodeAndProp,
   Requester,
 } = require("./utils");
 
@@ -26,8 +33,10 @@ describe(" User Auth Tests", () => {
     await clearDb();
   });
 
+  const plain = "Password?5";
+  const hashed = bcrypt.hashSync(plain, 12);
   const base = "/api/auth/";
-  describe("Sign Up", () => {
+  describe.skip("Sign Up", () => {
     const url = base + "sign-up/user";
     describe("should refuse when an email is taken", () => {
       it("for unverified account", async () => {
@@ -101,7 +110,7 @@ describe(" User Auth Tests", () => {
         );
       });
 
-      it.only("ensure that the that the data is saved in the UnVerified Database. ", async () => {
+      it("ensure that the that the data is saved in the UnVerified Database. ", async () => {
         const data = {
           name: "John Doe",
           email: "samuelmayna@gmail.com",
@@ -157,106 +166,45 @@ describe(" User Auth Tests", () => {
         const token =
           "sjdkfjdkjfkdjfdfkldjfkldjflkdjlfkjdklfjdklfjdkljfkljlkfd";
         const link = base + `verify/${token}`;
-
         const res = await requester.makeGetRequest(link);
-
-        //ensure that the token is deleted from the database.
         ensureHasStatusAndMessage(res, 403, "Email verfication failed.");
       });
     });
   });
 
-  describe.skip("Login ", () => {
+  describe("postLogin", () => {
+    const data = {
+      email: "johndoe@email.com",
+      name: "John Doe",
+      password: hashed,
+      avatar: "path/to/some/email",
+    };
     const url = base + "log-in/user";
-    describe("for correct credentials ", () => {
-      it(" ", async () => {
-        const data = {
-          name: "John Doe",
-          email: "example",
-          password: "pa55word?",
-          avatar: "link/to/some/email",
-        };
-        await UnVerified.createOne(data);
-
-        const res = await requester.makePostRequest(url, data);
-
-        ensureHasStatusAndError(
-          res,
-          401,
-          "Email not verified. Please verify Email by clicking the link sent to your inbox."
-        );
-      });
+    beforeAll(async () => {
+      await User.createOne(data);
     });
-    describe("should sign up when the email does not exist", () => {
-      it("ensure that token is generated", async () => {
-        const data = {
-          name: "John Doe",
-          email: "samuelmayna@gmail.com",
-          password: "pa55word?",
-          avatar: "link/to/some/email",
-        };
-        await requester.makePostRequest(url, data);
-
-        //ensure that the token is generated.
-        const tokenDetails = await TokenGenerator.findOne({
-          requester: data.email,
-        });
-
-        ensureNotNull(tokenDetails);
-      });
-
-      it("that that the email is sent and a message about verification is sent ", async () => {
-        const data = {
-          name: "John Doe",
-          email: "samuelmayna@gmail.com",
-          password: "pa55word?",
-          avatar: "link/to/some/email",
-        };
-
-        //if error is not thrown , the email has been sent.
-        const res = await requester.makePostRequest(url, data);
-        ensureHasStatusAndMessage(
-          res,
-          201,
-          "Sign Up successful.A link has been sent to your email. Click on it to verify your account."
-        );
-      });
+    afterAll(async () => {
+      await clearDb();
     });
-
-    describe("should allow verfication of email", () => {
-      it("for the correct link", async () => {
-        //simulate previous sign up without the sending of emails.
-        const data = {
-          name: "John Doe",
-          email: "samuelmayna@gmail.com",
-          password: "HashedPa55word?",
-          avatar: "link/to/some/email",
-        };
-
-        await UnVerified.createOne(data);
-        const tokenDetails = await TokenGenerator.createOne(data.email);
-        const link = base + `verify/${tokenDetails.token}`;
-
-        const res = await requester.makeGetRequest(link);
-
-        //ensure that the token is deleted from the database.
-        ensureHasStatusAndMessage(res, 201, "Email verfication successful.");
-        const savedToken = await TokenGenerator.findOne({
-          requester: data.email,
-        });
-        ensureNull(savedToken);
-      });
-
-      it("for the incorrect  link", async () => {
-        const token =
-          "sjdkfjdkjfkdjfdfkldjfkldjflkdjlfkjdklfjdklfjdkljfkljlkfd";
-        const link = base + `verify/${token}`;
-
-        const res = await requester.makeGetRequest(link);
-
-        //ensure that the token is deleted from the database.
-        ensureHasStatusAndMessage(res, 403, "Email verfication failed.");
-      });
+    it("should login for correct data", async () => {
+      //put the password as the normal password.
+      data.password = plain;
+      const res = await requester.makePostRequest(url, data);
+      ensureResHasStatusCodeAndProp(res, 201, "token");
+      const token = res.body.token;
+      ensureValueGreaterThanOrEqual(token.length, 41);
+      //ensure that the token has bearer in front.
+      const bearer = token.slice(0, 6);
+      ensureEqual(bearer, "Bearer");
+    });
+    it("should return error if email or password is incorrect", async () => {
+      const invalid = {
+        email: "someemail@email.com",
+        password: data.password,
+      };
+      const error = "Invalid Email or Password";
+      const res = await requester.makePostRequest(url, invalid);
+      ensureHasStatusAndError(res, 401, error);
     });
   });
 });
