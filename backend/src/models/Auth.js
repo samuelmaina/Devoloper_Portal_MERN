@@ -49,13 +49,11 @@ const Auth = new Schema(
 const { statics, methods } = Auth;
 
 statics.createOne = async function (data) {
-  const { name, email, password, avatar } = data;
-  let newMember = new this({
-    name,
-    email,
-    password,
-    avatar,
-  });
+  //some data will be copied directly from the database,
+  //in which the objects will have _id which will conflict
+  //with the assigned id with the mongodb.
+  delete data["_id"];
+  let newMember = new this(data);
   await newMember.save();
   return newMember;
 };
