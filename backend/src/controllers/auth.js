@@ -1,7 +1,10 @@
-const { BASE_URL } = require("../config");
+const { BASE_URL, SESSION_SECRET } = require("../config");
 const { UnVerified, User, TokenGenerator, Auth } = require("../models");
 const { emailSender } = require("../services");
 const { Responder } = require("../utils");
+
+const jwt = require("jsonwebtoken");
+const expiryTimeInSeconds = 3600;
 
 exports.signUp = async (req, res, next) => {
   try {
@@ -9,7 +12,7 @@ exports.signUp = async (req, res, next) => {
     let existingEmail;
     const { body, params } = req;
     const type = params.type;
-    const { email, name } = body;
+    const { name, email } = body;
     existingEmail = await UnVerified.findOneByEmail(email);
     if (existingEmail) {
       return responder
@@ -33,10 +36,13 @@ exports.signUp = async (req, res, next) => {
       html: `<h1>Email Confirmation</h1>
           <h2>Hello ${name}</h2>
           <p>Thank you for joing the online shop. Please confirm your email by clicking on the following link</p>
-          <a href=${BASE_URL}/verify/${tokenDetails.token}> Click here</a>
+          <a href=${BASE_URL}/auth/verify/${tokenDetails.token}> Click here</a>
           </div>`,
     };
+    const data = { ...body };
+    data.type = type;
 
+    await UnVerified.createOne(data);
     await emailSender(emailBody);
     return responder
       .withStatusCode(201)
@@ -76,10 +82,10 @@ exports.verifyEmail = async (req, res, next) => {
   }
 };
 
-exports.postLogin = async function (req, res, next) {
+exports.login = async function (req, res, next) {
   try {
     const responder = new Responder(res);
-    const { loginIn } = auth;
+
     const { body, params } = req;
     const type = params.type;
     const { email, password } = body;
@@ -92,19 +98,23 @@ exports.postLogin = async function (req, res, next) {
       const cb = (err, token) => {
         try {
           if (err) return next(err);
+
           const data = {
             success: true,
             auth: type,
             token: "Bearer " + token,
           };
-          responder.withStatusCode(201).withData(data).send();
+          responder.withStatusCode(201).attachDataToResBody(data).send();
         } catch (error) {
           next(error);
         }
       };
       return loginIn(payload, cb);
     }
-    responder.withStatusCode(401).withError("Invalid Email or Password").send();
+    return responder
+      .withStatusCode(401)
+      .withError("Invalid Email or Password")
+      .send();
   } catch (error) {
     next(error);
   }
@@ -118,4 +128,21 @@ function findByEmailForType(email, type) {
     default:
       break;
   }
+}
+
+function findOneWithCredentialsByType(type, email, password) {
+  switch (type) {
+    case "user":
+      return User.findOneWithCredentials(email, password);
+      break;
+    default:
+      break;
+  }
+}
+
+function loginIn(payload, cb) {
+  const config = {
+    expiresIn: expiryTimeInSeconds,
+  };
+  jwt.sign(payload, SESSION_SECRET, config, cb);
 }
