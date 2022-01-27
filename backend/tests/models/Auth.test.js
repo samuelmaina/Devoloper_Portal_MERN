@@ -41,13 +41,15 @@ describe("Auth Model", () => {
       ensureDocHasTheRightData(doc, data3);
     });
     it("should return null when email is wrong", async () => {
-      const data3 = data.data3;
       const doc = await Auth.findOneWithCredentials("some@email.com", plain);
       ensureNull(doc);
     });
     it("should return null  when password is wrong", async () => {
       const data3 = data.data3;
-      const doc = await Auth.findOneWithCredentials("some@email.com", plain);
+      const doc = await Auth.findOneWithCredentials(
+        data3.email,
+        "randompassword"
+      );
       ensureNull(doc);
     });
   });
