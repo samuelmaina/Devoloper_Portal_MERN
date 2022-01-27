@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 
 const { includeSetUpAndTearDowns, clearDb } = require("./utils");
 
-describe.skip("Test for UnVerified", () => {
+describe("Test for UnVerified", () => {
   includeSetUpAndTearDowns();
   afterEach(async () => {
     await clearDb();
@@ -18,6 +18,7 @@ describe.skip("Test for UnVerified", () => {
           email: "someexample@email.com",
           password: "example5",
           avatar: "link/to/some/avatar",
+          type: "user",
         };
         const doc = await UnVerified.createOne(data);
         ensureEqual(doc.name, data.name);
@@ -35,6 +36,7 @@ describe.skip("Test for UnVerified", () => {
           email: "someexample1@email.com",
           password: "example5",
           avatar: "link/to/some/avatar1",
+          type: "user",
         };
 
         const data2 = {
@@ -42,12 +44,14 @@ describe.skip("Test for UnVerified", () => {
           email: "someexample2@email.com",
           password: "example5",
           avatar: "link/to/some/avatar2",
+          type: "user",
         };
         const data3 = {
           name: "John Doe",
           email: "someexample3@email.com",
           password: "example5",
           avatar: "link/to/some/avatar3",
+          type: "user",
         };
 
         await UnVerified.createOne(data1);
