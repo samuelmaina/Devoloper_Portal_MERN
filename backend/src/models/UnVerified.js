@@ -31,6 +31,10 @@ const UnVerified = new Schema({
     type: String,
     required: true,
   },
+  type: {
+    type: String,
+    required: true,
+  },
 });
 
 const { statics, methods } = UnVerified;
@@ -42,8 +46,8 @@ statics.createOne = async function (data) {
   return doc.save();
 };
 
-statics.findOneByEmail = function (email) {
-  return this.findOne({ email });
+statics.findOneByEmail = async function (email) {
+  return await this.findOne({ email });
 };
 
 module.exports = mongoose.model("UnVerified", UnVerified);
