@@ -36,7 +36,7 @@ describe(" User Auth Tests", () => {
   const plain = "Password?5";
   const hashed = bcrypt.hashSync(plain, 12);
   const base = "/api/auth/";
-  describe.skip("Sign Up", () => {
+  describe("Sign Up", () => {
     const url = base + "sign-up/user";
     describe("should refuse when an email is taken", () => {
       it("for unverified account", async () => {
@@ -128,7 +128,7 @@ describe(" User Auth Tests", () => {
       });
     });
 
-    describe("should allow verfication of email", () => {
+    describe.only("should allow verfication of email", () => {
       it("for the correct link", async () => {
         //simulate previous sign up without the sending of emails.
         const data = {
@@ -136,6 +136,7 @@ describe(" User Auth Tests", () => {
           email: "samuelmayna@gmail.com",
           password: "HashedPa55word?",
           avatar: "link/to/some/email",
+          type: "user",
         };
 
         await UnVerified.createOne(data);
@@ -151,7 +152,7 @@ describe(" User Auth Tests", () => {
         });
         ensureNull(savedToken);
 
-        const saved = await Auth.findOne({ email: data.email });
+        const saved = await User.findOne({ email: data.email });
 
         //ensure that the data is saved to the right channel.
         ensureNotNull(saved);
