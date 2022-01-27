@@ -229,7 +229,7 @@ describe(" User Auth Tests", () => {
         ensureNull(savedToken);
       });
 
-      it.only("for the incorrect  link", async () => {
+      it("for the incorrect  link", async () => {
         const token =
           "sjdkfjdkjfkdjfdfkldjfkldjflkdjlfkjdklfjdklfjdkljfkljlkfd";
         const link = base + `verify/${token}`;
