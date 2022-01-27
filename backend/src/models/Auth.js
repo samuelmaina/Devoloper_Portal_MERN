@@ -62,6 +62,16 @@ statics.findOneByEmail = function (email) {
   return this.findOne({ email });
 };
 
+statics.findOneWithCredentials = async function (email, password) {
+  const doc = await this.findOneByEmail(email);
+  if (doc) {
+    const doMatch = await bcrypt.compare(password, doc.password);
+    if (doMatch) return doc;
+    return null;
+  }
+  return null;
+};
+
 methods.delete = async function () {
   return await this.deleteOne();
 };
