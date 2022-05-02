@@ -49,11 +49,7 @@ const Auth = new Schema(
 const { statics, methods } = Auth;
 
 statics.createOne = async function (data) {
-  //some data will be copied directly from the database,
-  //in which the objects will have _id which will conflict
-  //with the assigned id with the mongodb hence converstion to
-  //plain object
-  const result = data.toObject();
+  const result = deleteIdFromData(data);
   let newMember = new this(result);
   await newMember.save();
   return newMember;
@@ -79,13 +75,10 @@ methods.delete = async function () {
 
 function deleteIdFromData(data) {
   const result = {};
-  for (const key in data._doc) {
-    if (data.hasOwnProperty.call(data, key)) {
-      console.log(key);
-      if (key === "_id") {
-        continue;
-      } else result[key] = data[key];
-    }
+  for (const key in data) {
+    if (key === "_id") {
+      continue;
+    } else result[key] = data[key];
   }
   return result;
 }
