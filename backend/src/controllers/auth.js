@@ -35,7 +35,7 @@ exports.signUp = async (req, res, next) => {
       subject: "Please confirm your account",
       html: `<h1>Email Confirmation</h1>
           <h2>Hello ${name}</h2>
-          <p>Thank you for joing the online shop. Please confirm your email by clicking on the following link</p>
+          <p>Thank you for joing the Kakao.Where developers come to meet. Please confirm your email by clicking on the following link</p>
           <a href=${BASE_URL}/auth/verify/${tokenDetails.token}> Click here</a>
           </div>`,
     };
@@ -58,14 +58,14 @@ exports.signUp = async (req, res, next) => {
 exports.verifyEmail = async (req, res, next) => {
   try {
     const responder = new Responder(res);
-    const { token } = req.params;
+    const { params } = req;
+    const { token } = params;
 
     const tokenDetails = await TokenGenerator.findTokenDetailsByToken(token);
     if (tokenDetails) {
       const email = tokenDetails.requester;
       const details = await UnVerified.findOneByEmail(email);
-
-      await Auth.createOne(details);
+      await createOneForType(details.type, details);
       await details.delete();
       await tokenDetails.delete();
       return responder
@@ -119,6 +119,16 @@ exports.login = async function (req, res, next) {
     next(error);
   }
 };
+
+async function createOneForType(type, data) {
+  switch (type) {
+    case "user":
+      return await User.createOne(data);
+      break;
+    default:
+      break;
+  }
+}
 
 function findByEmailForType(email, type) {
   switch (type) {
