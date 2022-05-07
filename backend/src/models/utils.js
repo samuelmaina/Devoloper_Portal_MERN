@@ -21,3 +21,7 @@ exports.connectToDb = async (mongo_uri) => {
 exports.hashPassword = async (plain) => {
   return await bcrypt.hash(plain, SALT_ROUNDS);
 };
+
+exports.confirmPassword = async (plain, hash) => {
+  return bcrypt.compare(plain, hash);
+};
