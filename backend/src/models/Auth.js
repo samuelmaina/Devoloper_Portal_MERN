@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
+const { confirmPassword } = require("./utils");
 
 const Schema = mongoose.Schema;
 
@@ -62,13 +62,16 @@ statics.findOneByEmail = function (email) {
 statics.findOneWithCredentials = async function (email, password) {
   const doc = await this.findOneByEmail(email);
   if (doc) {
-    const doMatch = await bcrypt.compare(password, doc.password);
+    const doMatch = await doc.isPasswordCorrect(password);
     if (doMatch) return doc;
     return null;
   }
   return null;
 };
 
+methods.isPasswordCorrect = async function (plain) {
+  return await confirmPassword(plain, this.password);
+};
 methods.delete = async function () {
   return await this.deleteOne();
 };
