@@ -19,7 +19,7 @@ const {
   Requester,
 } = require("./utils");
 
-describe(" User Auth Tests", () => {
+describe.skip(" User Auth Tests", () => {
   let requester;
 
   beforeAll(async () => {
@@ -76,7 +76,7 @@ describe(" User Auth Tests", () => {
       });
     });
     describe("should sign up when the email does not exist", () => {
-      it("ensure that token is generated", async () => {
+      it("ensure that token to verify the email is generated", async () => {
         const data = {
           name: "John Doe",
           email: "samuelmayna@gmail.com",
@@ -110,7 +110,7 @@ describe(" User Auth Tests", () => {
         );
       });
 
-      it("ensure that the that the data is saved in the UnVerified Database. ", async () => {
+      it("ensure that the that the data is saved in the UnVerified collection in the Database. ", async () => {
         const data = {
           name: "John Doe",
           email: "samuelmayna@gmail.com",
@@ -128,8 +128,10 @@ describe(" User Auth Tests", () => {
       });
     });
 
-    describe.only("should allow verfication of email", () => {
+    describe("should allow verfication of email", () => {
       it("for the correct link", async () => {
+        //a link is sent in an email.
+        //for the test the link is going to be followed
         //simulate previous sign up without the sending of emails.
         const data = {
           name: "John Doe",
@@ -140,13 +142,15 @@ describe(" User Auth Tests", () => {
         };
 
         await UnVerified.createOne(data);
+
         const tokenDetails = await TokenGenerator.createOne(data.email);
+
         const link = base + `verify/${tokenDetails.token}`;
 
         const res = await requester.makeGetRequest(link);
 
-        //ensure that the token is deleted from the database.
         ensureHasStatusAndMessage(res, 201, "Email verfication successful.");
+        //ensure that the token is deleted from the database.
         const savedToken = await TokenGenerator.findOne({
           requester: data.email,
         });
@@ -163,7 +167,7 @@ describe(" User Auth Tests", () => {
         ensureNull(retrieved);
       });
 
-      it("for the incorrect  link", async () => {
+      it("should fail for incorrect  link", async () => {
         const token =
           "sjdkfjdkjfkdjfdfkldjfkldjflkdjlfkjdklfjdklfjdkljfkljlkfd";
         const link = base + `verify/${token}`;
@@ -173,7 +177,7 @@ describe(" User Auth Tests", () => {
     });
   });
 
-  describe("postLogin", () => {
+  describe("Login", () => {
     const data = {
       email: "johndoe@email.com",
       name: "John Doe",
