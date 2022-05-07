@@ -1,73 +1,127 @@
 const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
 
 const Schema = mongoose.Schema;
 
 const ObjectID = Schema.Types.ObjectId;
 
-const ranges = require("../constraints").auth;
-
-const Auth = new Schema(
-  {
-    user: {
-      type: ObjectID,
-      required: true,
-      ref: "users",
-    },
-    email: {
-      type: String,
-      required: true,
-      trim: true,
-      lowercase: true,
-      minlength: ranges.email.minlength,
-      maxlength: ranges.email.maxlength,
-    },
-    password: {
-      type: String,
-      required: true,
-      maxlength: 80,
-      minlength: 10,
-    },
-
-    avatar: {
-      type: String,
-      required: true,
-    },
-    joiningDate: {
-      type: Date,
-      default: Date.now(),
-    },
+const Profile = new Schema({
+  user: {
+    type: ObjectID,
+    required: true,
+    ref: "users",
   },
-  baseOptions
-);
+  handle: {
+    type: String,
+    required: true,
+    maxlength: 40,
+  },
+  company: {
+    type: String,
+  },
+  website: {
+    type: String,
+  },
+  location: {
+    type: String,
+  },
+  status: {
+    type: String,
+    required: true,
+  },
+  skills: {
+    type: [String],
+    required: true,
+  },
+  bio: {
+    type: String,
+  },
+  githubusername: {
+    type: String,
+  },
+  experience: [
+    {
+      title: {
+        type: String,
+        required: true,
+      },
+      company: {
+        type: String,
+        required: true,
+      },
+      location: {
+        type: String,
+        required: true,
+      },
+      from: {
+        type: Date,
+        required: true,
+      },
+      to: {
+        type: Date,
+      },
+      current: {
+        type: Boolean,
+        default: false,
+      },
+      description: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
 
-const { statics, methods } = Auth;
+  education: [
+    {
+      school: {
+        type: String,
+        required: true,
+      },
+      fieldOfStudy: {
+        type: String,
+        required: true,
+      },
+      location: {
+        type: String,
+        required: true,
+      },
+      from: {
+        type: Date,
+        required: true,
+      },
+      to: {
+        type: Date,
+      },
+      current: {
+        type: Boolean,
+        default: false,
+      },
+      description: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
+  socials: {
+    youtube: { type: String },
+    facebook: { type: String },
+    twitter: { type: String },
+    linkedin: { type: String },
+    instagram: { type: String },
+  },
+  joiningDate: {
+    type: Date,
+    default: Date.now(),
+  },
+});
+
+const { statics, methods } = Profile;
 
 statics.createOne = async function (data) {
-  //some data will be copied directly from the database,
-  //in which the objects will have _id which will conflict
-  //with the assigned id with the mongodb.
-  delete data["_id"];
-  let newMember = new this(data);
-  await newMember.save();
-  return newMember;
+  return await new this(data).save();
 };
 
-statics.findOneByEmail = function (email) {
-  return this.findOne({ email });
+statics.findOneWithUserId = async function (userId) {
+  return await this.findOne({ user: userId });
 };
 
-statics.findOneWithCredentials = async function (email, password) {
-  const doc = await this.findOneByEmail(email);
-  if (doc) {
-    const doMatch = await bcrypt.compare(password, doc.password);
-    if (doMatch) return doc;
-    return null;
-  }
-  return null;
-};
-
-methods.delete = async function () {
-  return await this.deleteOne();
-};
-module.exports = mongoose.model("Auth", Auth);
+module.exports = mongoose.model("profile", Profile);
