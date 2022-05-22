@@ -1,7 +1,7 @@
 import React from "react";
 import { Form } from "antd";
 
-import "../../css/sign-up.css";
+import "../../css/auth-form.css";
 import {
   name,
   email,
