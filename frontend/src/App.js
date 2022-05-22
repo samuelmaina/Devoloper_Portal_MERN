@@ -1,7 +1,16 @@
+import React from "react";
+
+import { Main, NavBar } from "./components";
+
 import "./App.css";
 
 function App() {
-  return <div className="App"> Kikao </div>;
+  return (
+    <>
+      <NavBar />
+      <Main />;
+    </>
+  );
 }
 
 export default App;
