@@ -3,14 +3,14 @@ import { Form } from "antd";
 
 import "../../css/auth-form.css";
 
-import { email, submitButton } from "./fields";
+import { emailField, submitButton } from "./fields";
 
 function Reset() {
   return (
     <div className="container">
       <h1> Reset Password</h1>
       <Form className="form" labelCol={{ span: 10 }} wrapperCol={{ span: 14 }}>
-        {email}
+        {emailField}
         {submitButton("Reset Password")}
       </Form>
     </div>

@@ -1,33 +1,49 @@
 import React from "react";
+
+import { Link } from "react-router-dom";
+
 import { Form } from "antd";
 
+import { registerUser } from "../../redux/actions/auth";
+
+import { useDispatch, useSelector } from "react-redux";
 import "../../css/auth-form.css";
 import {
-  name,
-  email,
-  password,
-  confirmPassword,
+  emailField,
+  passwordField,
+  confirmPasswordField,
+  agreementField,
   submitButton,
-  agreement,
+  nameField,
 } from "./fields";
 const { Item } = Form;
 
-function SignUp() {
+function SignUp({ history }) {
+  const dispatch = useDispatch();
+  const onSubmit = (data) => {
+    dispatch(registerUser(data, history));
+  };
+
   return (
     <div className="container">
       <h1> Register </h1>
 
-      <Form className="form" labelCol={{ span: 10 }} wrapperCol={{ span: 14 }}>
-        {name}
-        {email}
-        {password}
-        {confirmPassword}
-        {agreement}
+      <Form
+        className="form"
+        labelCol={{ span: 10 }}
+        wrapperCol={{ span: 14 }}
+        onFinish={onSubmit}
+      >
+        {nameField}
+        {emailField}
+        {passwordField}
+        {confirmPasswordField}
+        {agreementField}
         {submitButton("Register")}
         <Item>
           <p>
             Already has an account
-            <a href="/log-in"> Sign In</a>
+            <Link to="/log-in">Sign In </Link>
           </p>
         </Item>
       </Form>

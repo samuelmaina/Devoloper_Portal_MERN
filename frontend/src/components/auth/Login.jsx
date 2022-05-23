@@ -1,9 +1,11 @@
 import React from "react";
 import { Form } from "antd";
 
+import { Link } from "react-router-dom";
+
 import "../../css/auth-form.css";
 
-import { email, password, submitButton } from "./fields";
+import { emailField, passwordField, submitButton } from "./fields";
 const { Item } = Form;
 
 function LogIn() {
@@ -12,18 +14,18 @@ function LogIn() {
       <h1> Sign In</h1>
 
       <Form className="form" labelCol={{ span: 10 }} wrapperCol={{ span: 14 }}>
-        {email}
-        {password}
+        {emailField}
+        {passwordField}
 
         {submitButton("Log In")}
         <Item>
           <span>
             Doesn't have an account
-            <a href="/sign-up"> Sign UP</a>
+            <Link to="/sign-up"> Sign Up </Link>
           </span>
           <span>
             Forgot Password
-            <a href="/reset"> Reset</a>
+            <Link to="/reset"> Reset Password </Link>
           </span>
         </Item>
       </Form>
