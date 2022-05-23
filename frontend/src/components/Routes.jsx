@@ -2,11 +2,12 @@ import React from "react";
 
 import { Routes, Route } from "react-router-dom";
 
-import { HomePage, SignUp, Login, Reset } from "./index";
+import { HomePage, SignUp, Login, Reset, EmailVerifier } from "./index";
 
 const urls = [
   { path: "/", element: HomePage },
   { path: "/sign-up", element: SignUp },
+  { path: "/verify/:token", element: EmailVerifier },
   { path: "/log-in", element: Login },
   { path: "/reset", element: Reset },
 ];
