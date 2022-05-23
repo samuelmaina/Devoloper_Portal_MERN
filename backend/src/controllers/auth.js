@@ -36,7 +36,7 @@ exports.signUp = async (req, res, next) => {
       html: `<h1>Email Confirmation</h1>
           <h2>Hello ${name}</h2>
           <p>Thank you for joing the Kakao.Where developers come to meet. Please confirm your email by clicking on the following link</p>
-          <a href=${BASE_URL}/auth/verify/${tokenDetails.token}> Click here</a>
+          <a href=${BASE_URL}/api/auth/verify/${tokenDetails.token}> Click here</a>
           </div>`,
     };
     const data = { ...body };
@@ -57,6 +57,7 @@ exports.signUp = async (req, res, next) => {
 
 exports.verifyEmail = async (req, res, next) => {
   try {
+    console.log("Verified the email.");
     const responder = new Responder(res);
     const { params } = req;
     const { token } = params;
