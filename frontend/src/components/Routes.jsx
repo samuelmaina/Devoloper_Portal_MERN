@@ -14,8 +14,13 @@ const urls = [
 function AppRoutes() {
   return (
     <Routes>
-      {urls.map((url) => (
-        <Route exact path={url.path} element={<url.element />}></Route>
+      {urls.map((url, index) => (
+        <Route
+          exact
+          path={url.path}
+          key={index}
+          element={<url.element />}
+        ></Route>
       ))}
     </Routes>
   );
