@@ -7,7 +7,6 @@ function dispatcher(state = intialState, action) {
   switch (action.type) {
     default:
       return state;
-      break;
   }
 }
 
