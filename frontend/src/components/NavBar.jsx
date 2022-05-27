@@ -1,83 +1,94 @@
+import { useState, useEffect } from "react";
+
+import { Link, useNavigate } from "react-router-dom";
+
 import {
   AppstoreOutlined,
   MailOutlined,
   SettingOutlined,
+  LoginOutlined,
+  LogoutOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
-import { useState } from "react";
-const items = [
+import { useSelector, useDispatch } from "react-redux";
+
+import { logoutUser } from "../redux/actions/auth";
+
+const { Item } = Menu;
+
+const guestLinks = [
   {
-    label: "Log In",
-    key: "mail",
-    icon: <MailOutlined />,
+    label: "Sign Up",
+    key: "sign-up",
+    to: "/sign-up",
+    icon: <LoginOutlined />,
   },
   {
-    label: "Navigation Two",
-    key: "app",
+    label: "Log In",
+    key: "log-in",
+    to: "/log-in",
     icon: <AppstoreOutlined />,
     disabled: false,
   },
+];
+
+const userLinks = [
   {
-    label: "Navigation Three - Submenu",
-    key: "SubMenu",
-    icon: <SettingOutlined />,
-    children: [
-      {
-        type: "group",
-        label: "Item 1",
-        children: [
-          {
-            label: "Option 1",
-            key: "setting:1",
-          },
-          {
-            label: "Option 2",
-            key: "setting:2",
-          },
-        ],
-      },
-      {
-        type: "group",
-        label: "Item 2",
-        children: [
-          {
-            label: "Option 3",
-            key: "setting:3",
-          },
-          {
-            label: "Option 4",
-            key: "setting:4",
-          },
-        ],
-      },
-    ],
+    label: "Your Proflie",
+    to: "/profile",
+    key: "profile",
+    icon: <LogoutOutlined />,
   },
   {
-    label: (
-      <a href="https://ant.design" target="_blank" rel="noopener noreferrer">
-        Navigation Four - Link
-      </a>
-    ),
-    key: "alipay",
+    label: "Log Out",
+    key: "logout",
+    icon: <LogoutOutlined />,
   },
 ];
 
+const logoutRedirect = "/";
+
 const App = () => {
   const [current, setCurrent] = useState("mail");
+  const [menu, setMenu] = useState(guestLinks);
+
+  const auth = useSelector((state) => state.auth);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const onClick = (e) => {
-    console.log("click ", e);
     setCurrent(e.key);
+    if (e.key === "logout") {
+      dispatch(logoutUser());
+      navigate(logoutRedirect);
+    }
   };
 
+  useEffect(() => {
+    if (auth.isAuth) {
+      setMenu(userLinks);
+    } else {
+      setMenu(guestLinks);
+    }
+  }, [auth]);
+
   return (
-    <Menu
-      onClick={onClick}
-      selectedKeys={[current]}
-      mode="horizontal"
-      items={items}
-    />
+    <Menu theme="light" onClick={onClick}>
+      {renderMenuItems(menu)}
+    </Menu>
   );
 };
+
+function renderMenuItems(items) {
+  return items.map((item, index) => {
+    const { icon, to, label, key } = item;
+    return (
+      <Menu.Item icon={icon} key={key}>
+        {to ? <Link to={to}> {label}</Link> : <>{label}</>}
+      </Menu.Item>
+    );
+  });
+}
 
 export default App;
