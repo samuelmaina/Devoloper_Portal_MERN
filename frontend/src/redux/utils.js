@@ -1,5 +1,6 @@
 import axios from "axios";
 import { SET_AUTH } from "./actions/types";
+
 import store from "./store";
 
 function setAuthTokenInHeader(token) {
@@ -21,7 +22,9 @@ export function authenticate() {
 
 export function attachToken(token) {
   localStorage.setItem("jwt-token", token);
+  authenticate();
 }
 export function removeToken() {
   localStorage.removeItem("jwt-token");
+  authenticate();
 }
