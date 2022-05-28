@@ -1,8 +1,8 @@
 import axios from "axios";
 
-import { GET_ERRORS, GET_SUCCESS_MESSAGES, SET_AUTH } from "./types";
+import { GET_SUCCESS_MESSAGES } from "./types";
 
-import { attachToken, removeToken, authenticate } from "../utils";
+import { attachToken, removeToken, setServerError, setError } from "../utils";
 export const registerUser = (data) => async (dispatch) => {
   try {
     const res = await axios.post("/api/auth/sign-up/user", data);
@@ -13,10 +13,7 @@ export const registerUser = (data) => async (dispatch) => {
       });
     }
   } catch (err) {
-    dispatch({
-      type: GET_ERRORS,
-      payload: err.response.data,
-    });
+    dispatch(setServerError(err));
   }
 };
 
@@ -30,10 +27,7 @@ export const verifyEmail = (token) => async (dispatch) => {
       });
     }
   } catch (err) {
-    dispatch({
-      type: GET_ERRORS,
-      payload: err.response.data,
-    });
+    dispatch(setServerError(err));
   }
 };
 
@@ -43,10 +37,7 @@ export const loginUser = (data) => async (dispatch) => {
     const { token } = res.data;
     attachToken(token);
   } catch (err) {
-    dispatch({
-      type: GET_ERRORS,
-      payload: err.response.data,
-    });
+    dispatch(setServerError(err));
   }
 };
 
@@ -54,9 +45,6 @@ export const logoutUser = () => (dispatch) => {
   try {
     removeToken();
   } catch (err) {
-    dispatch({
-      type: GET_ERRORS,
-      payload: err,
-    });
+    dispatch(setError(err));
   }
 };
