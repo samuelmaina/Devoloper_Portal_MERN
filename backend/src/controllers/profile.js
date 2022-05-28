@@ -8,7 +8,7 @@ exports.getUserProfile = async (req, res, next) => {
     if (!profile)
       return responder
         .withStatusCode(404)
-        .withMessage("You don't have any profile yet.Consider creating one.")
+        .withError("You don't have any profile yet.Consider creating one.")
         .send();
     return responder
       .withStatusCode(200)
