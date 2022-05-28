@@ -5,14 +5,10 @@ import { useSelector } from "react-redux";
 const redirectUrl = "/log-in";
 
 function ProtectedRoute({ children }) {
-  const [shouldRedirect, setShouldRedirect] = useState(true);
-  const auth = useSelector((state) => state.auth);
-
-  useEffect(() => {
-    setShouldRedirect(!auth.isAuth);
-  }, [auth]);
-  return shouldRedirect ? (
-    <Navigate to={redirectUrl} replace />
+  const isAuth = useSelector((state) => state.auth.isAuth);
+  const location = useLocation();
+  return !isAuth ? (
+    <Navigate to={redirectUrl} state={{ from: location }} replace />
   ) : children ? (
     children
   ) : (
