@@ -1,5 +1,5 @@
 import axios from "axios";
-import { SET_AUTH } from "./actions/types";
+import { SET_AUTH, GET_ERRORS } from "./actions/types";
 
 import store from "./store";
 
@@ -27,4 +27,15 @@ export function attachToken(token) {
 export function removeToken() {
   localStorage.removeItem("jwt-token");
   authenticate();
+}
+
+export function setServerError(err) {
+  return setError(err.response.data);
+}
+
+export function setError(err) {
+  return {
+    type: GET_ERRORS,
+    payload: err,
+  };
 }
