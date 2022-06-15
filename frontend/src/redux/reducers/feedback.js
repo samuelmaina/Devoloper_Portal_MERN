@@ -8,9 +8,9 @@ const intialState = {};
 function dispatcher(state = intialState, action) {
   switch (action.type) {
     case GET_ERRORS:
-      return action.payload;
+      return { ...state, error: action.payload };
     case GET_SUCCESS_MESSAGES:
-      return action.payload;
+      return { ...state, message: action.payload };
     case ERASE_INFOS:
       state = {};
       return {};

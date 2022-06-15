@@ -36,7 +36,6 @@ const Auth = new Schema(
 
     avatar: {
       type: String,
-      required: true,
     },
     joiningDate: {
       type: Date,

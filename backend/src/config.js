@@ -1,4 +1,9 @@
-require("dotenv").config();
+const path = require("path");
+
+require("dotenv").config({
+  path: path.resolve(__dirname, "../.env"),
+});
+
 const envVars = process.env;
 
 module.exports = {
@@ -8,6 +13,7 @@ module.exports = {
   EMAIL_SENDER: envVars.EMAIL_SENDER,
   TOKEN_VALIDITY_IN_HOURS: envVars.TOKEN_VALIDITY_IN_HOURS,
   SENDGRID_API_KEY: envVars.SENDGRID_API_KEY,
-  BASE_URL: envVars.BASE_URL,
-  SESSION_SECRET: envVars.SESSION_SECRET
+  CLIENT_URL: envVars.CLIENT_URL,
+  SESSION_SECRET: envVars.SESSION_SECRET,
+  NODE_ENV: envVars.NODE_ENV,
 };

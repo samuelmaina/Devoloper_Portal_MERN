@@ -29,7 +29,6 @@ const UnVerified = new Schema({
   },
   avatar: {
     type: String,
-    required: true,
   },
   type: {
     type: String,

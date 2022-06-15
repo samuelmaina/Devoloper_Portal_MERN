@@ -10,9 +10,10 @@ import {
   EmailVerifier,
   Dashboard,
   ProtectedRoute,
+  CreateProfile,
 } from "./index";
 
-const guestRoutes = [
+const guest = [
   { path: "/", key: "home", element: HomePage },
   { path: "/sign-up", key: "signup", element: SignUp },
   { path: "/verify/:token", key: "emailverification", element: EmailVerifier },
@@ -22,12 +23,13 @@ const guestRoutes = [
 
 const protectedRoutes = [
   { path: "/profile", key: "profile", element: Dashboard },
+  { path: "/create-profile", key: "createprofile", element: CreateProfile },
 ];
 
 function AppRoutes() {
   return (
     <Routes>
-      {renderRoutes(guestRoutes)}
+      {renderRoutes(guest)}
       <Route element={<ProtectedRoute />}>
         {renderRoutes(protectedRoutes)}
       </Route>

@@ -22,7 +22,8 @@ const Profile = new Schema({
     type: String,
   },
   location: {
-    type: String,
+    type: Array,
+    required: true,
   },
   status: {
     type: String,

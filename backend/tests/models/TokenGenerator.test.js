@@ -5,7 +5,7 @@ const { includeSetUpAndTearDowns, clearDb } = require("./utils");
 const { token } = require("../../src/constraints");
 const { TOKEN_VALIDITY_IN_HOURS } = require("../../src/config");
 
-describe.skip("Token Generator", () => {
+describe("Token Generator", () => {
   includeSetUpAndTearDowns();
   // afterEach(async () => {
   //   await clearDb();

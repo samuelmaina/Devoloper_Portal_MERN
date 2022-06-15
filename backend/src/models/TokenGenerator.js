@@ -30,7 +30,7 @@ TokenGenerator.index(
   {
     expiryTime: 1,
   },
-  { expireAfterSeconds: 10 }
+  { expireAfterSeconds: TOKEN_VALIDITY_IN_HOURS * 3600 }
 );
 const { statics, methods } = TokenGenerator;
 

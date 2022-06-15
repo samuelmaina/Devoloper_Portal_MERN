@@ -24,6 +24,16 @@ exports.closeApp = async () => {
   await disconnectFromTestDb();
 };
 
+exports.ensureResHasStatusCodeAndFieldData = (res, statusCode, key, value) => {
+  ensureEqual(res.status, statusCode);
+  expect(res.body).toHaveProperty(key, value);
+};
+
+exports.ensureResHasStatusCodeAndProp = (res, status, prop) => {
+  ensureHasStatus(res, status);
+  expect(res.body).toHaveProperty(prop);
+};
+
 exports.ensureHasStatusAndError = (res, status, error) => {
   ensureEqual(res.body.error, error);
   ensureHasStatus(res, status);
@@ -46,6 +56,17 @@ class Requester {
   }
   async makeGetRequest(url) {
     return await request(this.app).get(url);
+  }
+
+  async makeAuthorizedPostRequest(url, token, body) {
+    return await request(this.app)
+      .post(url)
+      .set("Authorization", token)
+      .send(body);
+  }
+
+  async makeAuthorizedGetRequest(url, token) {
+    return await request(this.app).get(url).set("Authorization", token);
   }
 }
 

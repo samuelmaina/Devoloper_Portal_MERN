@@ -9,7 +9,7 @@ const {
 } = require("./utils");
 
 const plain = "pa55Word??";
-describe.skip("Auth Model", () => {
+describe("Auth Model", () => {
   includeSetUpAndTearDowns();
   afterEach(async () => {
     await clearDb();

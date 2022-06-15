@@ -1,18 +1,23 @@
-import {
-  Form,
-  Button,
-  Checkbox,
-  Typography,
-  DatePicker,
-  Input,
-  Select,
-} from "antd";
+import { Form, Button, Checkbox, Input, Typography, Space } from "antd";
+
+import "../../css/auth-form.css";
+
+import { Link } from "react-router-dom";
 
 const { Item } = Form;
 
-export const name = (
+const { Title } = Typography;
+export const titleField = (title) => {
+  return (
+    <Title level={1} style={{ alignSelf: "center" }}>
+      {title}
+    </Title>
+  );
+};
+
+export const nameField = (
   <Item
-    name="fullName"
+    name="name"
     label="Full Name"
     rules={[
       {
@@ -27,13 +32,13 @@ export const name = (
     ]}
     hasFeedback
   >
-    <Input placeholder="Type your name" />
+    <Input name="name" placeholder="Type your name" />
   </Item>
 );
-export const email = (
+export const emailField = (
   <Item
-    name="email"
     label="Email"
+    name="email"
     rules={[
       { type: "email", message: "Please enter a valid password." },
       { required: true, message: "Please enter an email" },
@@ -45,11 +50,11 @@ export const email = (
     ]}
     hasFeedback
   >
-    <Input placeholder="Enter email" type="email" />
+    <Input name="email" placeholder="Enter email" type="email" />
   </Item>
 );
 
-export const password = (
+export const passwordField = (
   <Item
     name="password"
     label="Password"
@@ -61,11 +66,11 @@ export const password = (
         message: "The password must be 10 to 16 characters long",
       },
       {
-        validator: (_, value, cb) => {
+        validator: (_, value) => {
           const re =
             /^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*]/;
-          if (!re.test(value)) cb("Error");
-          else cb();
+          if (!re.test(value)) return Promise.reject("Error");
+          return Promise.resolve();
         },
         message:
           "Atleast one uppercase, lowercase,character and a number No ? or `",
@@ -73,11 +78,11 @@ export const password = (
     ]}
     hasFeedback
   >
-    <Input.Password placeholder="Type password" />
+    <Input.Password name="password" placeholder="Type password" />
   </Item>
 );
 
-export const confirmPassword = (
+export const confirmPasswordField = (
   <Item
     name="confirmPassword"
     label="Confirm Password"
@@ -97,13 +102,13 @@ export const confirmPassword = (
   </Item>
 );
 
-export const agreement = (
+export const agreementField = (
   <Item
     name="agreement"
     valuePropName="checked"
     rules={[
       {
-        validator: (_, value, cb) => {
+        validator: (_, value) => {
           return value
             ? Promise.resolve()
             : Promise.reject(
@@ -128,3 +133,28 @@ export const submitButton = (text) => {
     </Item>
   );
 };
+
+export const signInPrompt = (
+  <Item>
+    <p>
+      <span>Already has an account </span>
+      <Space size="large" />
+      <Link to="/log-in">Sign In </Link>
+    </p>
+  </Item>
+);
+
+export const signUpPagePrompts = (
+  <Item>
+    <span>
+      <span> Doesn't have an account </span>
+      <Space size="large" />
+      <Link to="/sign-up"> Sign Up </Link>
+    </span>
+    <span>
+      Forgot Password
+      <Space />
+      <Link to="/reset"> Reset Password </Link>
+    </span>
+  </Item>
+);

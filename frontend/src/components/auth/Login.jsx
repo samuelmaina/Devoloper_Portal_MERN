@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 import { useNavigate, useLocation } from "react-router-dom";
-import { Form } from "antd";
+import { Form, Card } from "antd";
 
 import { useDispatch, useSelector } from "react-redux";
 
@@ -50,12 +50,16 @@ function LogIn() {
         onFinish={(data) => {
           onSubmit(data);
         }}
+        spellCheck
+        scrollToFirstError
       >
-        {titleField("Sign In")}
-        {emailField}
-        {passwordField}
-        {submitButton("Log In")}
-        {signUpPagePrompts}
+        <Card>
+          {titleField("Sign In")}
+          {emailField}
+          {passwordField}
+          {submitButton("Log In")}
+          {signUpPagePrompts}
+        </Card>
       </Form>
     </div>
   );

@@ -3,11 +3,11 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import {
-  AppstoreOutlined,
-  MailOutlined,
-  SettingOutlined,
   LoginOutlined,
   LogoutOutlined,
+  UserAddOutlined,
+  ProfileFilled,
+  HomeTwoTone,
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import { useSelector, useDispatch } from "react-redux";
@@ -16,18 +16,25 @@ import { logoutUser } from "../redux/actions/auth";
 
 const { Item } = Menu;
 
+const home = {
+  label: "Kikao ",
+  key: "home",
+  to: "/",
+  icon: <HomeTwoTone />,
+};
+
 const guestLinks = [
   {
     label: "Sign Up",
     key: "sign-up",
     to: "/sign-up",
-    icon: <LoginOutlined />,
+    icon: <UserAddOutlined />,
   },
   {
     label: "Log In",
     key: "log-in",
     to: "/log-in",
-    icon: <AppstoreOutlined />,
+    icon: <LoginOutlined />,
     disabled: false,
   },
 ];
@@ -37,7 +44,7 @@ const userLinks = [
     label: "Your Proflie",
     to: "/profile",
     key: "profile",
-    icon: <LogoutOutlined />,
+    icon: <ProfileFilled />,
   },
   {
     label: "Log Out",
@@ -49,7 +56,6 @@ const userLinks = [
 const logoutRedirect = "/";
 
 const App = () => {
-  const [current, setCurrent] = useState("mail");
   const [menu, setMenu] = useState(guestLinks);
 
   const auth = useSelector((state) => state.auth);
@@ -58,7 +64,6 @@ const App = () => {
   const navigate = useNavigate();
 
   const onClick = (e) => {
-    setCurrent(e.key);
     if (e.key === "logout") {
       dispatch(logoutUser());
       navigate(logoutRedirect);
@@ -75,18 +80,21 @@ const App = () => {
 
   return (
     <Menu theme="light" onClick={onClick}>
+      <Item icon={home.icon} key={home.key}>
+        <Link to={home.to}> {home.label}</Link>
+      </Item>
       {renderMenuItems(menu)}
     </Menu>
   );
 };
 
 function renderMenuItems(items) {
-  return items.map((item, index) => {
+  return items.map((item) => {
     const { icon, to, label, key } = item;
     return (
-      <Menu.Item icon={icon} key={key}>
+      <Item icon={icon} key={key}>
         {to ? <Link to={to}> {label}</Link> : <>{label}</>}
-      </Menu.Item>
+      </Item>
     );
   });
 }

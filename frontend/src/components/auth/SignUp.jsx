@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { useNavigate } from "react-router-dom";
 
-import { Form } from "antd";
+import { Form, Card } from "antd";
 
 import { registerUser } from "../../redux/actions/auth";
 
@@ -18,6 +18,7 @@ import {
   submitButton,
   nameField,
   signInPrompt,
+  titleField,
 } from "./fields";
 import { renderErrorMessage, renderSuccessMessage } from "../message";
 
@@ -42,20 +43,23 @@ function SignUp() {
   }
   return (
     <div className="container">
-      <h1> Register </h1>
       <Form
         className="form"
         labelCol={{ span: 10 }}
         wrapperCol={{ span: 14 }}
         onFinish={onSubmit}
+        scrollToFirstError
       >
-        {nameField}
-        {emailField}
-        {passwordField}
-        {confirmPasswordField}
-        {agreementField}
-        {submitButton("Register")}
-        {signInPrompt}
+        <Card>
+          {titleField("Sign Up")}
+          {nameField}
+          {emailField}
+          {passwordField}
+          {confirmPasswordField}
+          {agreementField}
+          {submitButton("Register")}
+          {signInPrompt}
+        </Card>
       </Form>
     </div>
   );

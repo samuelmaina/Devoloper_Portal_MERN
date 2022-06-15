@@ -20,7 +20,7 @@ describe("Profile Model", () => {
       ensureThatRetrievedDocHasAllData(profileOne, saved);
     });
 
-    describe.only("findOneByUseId", () => {
+    describe("findOneByUseId", () => {
       it("should return a profile for a userId if the profile exists", async () => {
         const userId1 = generateRandomMongooseId();
         const userId2 = generateRandomMongooseId();
@@ -81,7 +81,7 @@ function ensureAllfieldAreThere(expected, actual) {
 function returnProfileWithUserId(userId) {
   return {
     user: userId,
-    handle: "some/path/to/somewhere",
+    handle: "handle1",
     company: "abc",
     website: "www.example.com",
     location: "test_location",

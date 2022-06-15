@@ -30,7 +30,7 @@ export function removeToken() {
 }
 
 export function setServerError(err) {
-  return setError(err.response.data);
+  return setError(err.response.data.error);
 }
 
 export function setError(err) {

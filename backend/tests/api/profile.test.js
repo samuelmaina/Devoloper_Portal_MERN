@@ -85,7 +85,7 @@ describe("Profile routers tests.", () => {
     });
   });
 
-  describe.only("get current profile", () => {
+  describe("get current profile", () => {
     const url = "/api/profile/";
     it("should refuse when the user is not logged in", async () => {
       token = "Bearer abkljrklejklejrkljeklrejjrklejr";
@@ -96,7 +96,7 @@ describe("Profile routers tests.", () => {
     it("should return an notification message if the currrent user does not have a profile", async () => {
       const { token } = await loginUser();
       const res = await requester.makeAuthorizedGetRequest(url, token);
-      ensureHasStatusAndMessage(
+      ensureHasStatusAndError(
         res,
         404,
         "You don't have any profile yet.Consider creating one."

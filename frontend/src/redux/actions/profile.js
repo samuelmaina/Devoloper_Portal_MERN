@@ -2,6 +2,8 @@ import axios from "axios";
 
 import { GET_PROFILE, PROFILE_LOADING } from "./types";
 
+import { setError, setServerError } from "../utils";
+
 export const getCurrentProfile = () => async (dispatch) => {
   try {
     dispatch(setProfileLoading());
@@ -9,9 +11,8 @@ export const getCurrentProfile = () => async (dispatch) => {
     if (res) {
       dispatchProfile(res.data);
     }
-  } catch (error) {
-    //render that we don't have profile regardless of
-    //the error.
+  } catch (err) {
+    dispatch(setServerError(err));
     dispatchProfile({});
   }
   function dispatchProfile(profile) {

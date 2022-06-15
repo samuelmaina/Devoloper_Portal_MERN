@@ -19,7 +19,7 @@ const {
   Requester,
 } = require("./utils");
 
-describe.skip(" User Auth Tests", () => {
+describe(" User Auth Tests", () => {
   let requester;
 
   beforeAll(async () => {
@@ -172,7 +172,7 @@ describe.skip(" User Auth Tests", () => {
           "sjdkfjdkjfkdjfdfkldjfkldjflkdjlfkjdklfjdklfjdkljfkljlkfd";
         const link = base + `verify/${token}`;
         const res = await requester.makeGetRequest(link);
-        ensureHasStatusAndMessage(res, 403, "Email verfication failed.");
+        ensureHasStatusAndError(res, 403, "Email verfication failed.");
       });
     });
   });

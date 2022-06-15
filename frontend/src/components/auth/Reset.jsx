@@ -1,17 +1,19 @@
 import React from "react";
-import { Form } from "antd";
+import { Form, Card } from "antd";
 
 import "../../css/auth-form.css";
 
-import { emailField, submitButton } from "./fields";
+import { emailField, submitButton, titleField } from "./fields";
 
 function Reset() {
   return (
     <div className="container">
-      <h1> Reset Password</h1>
       <Form className="form" labelCol={{ span: 10 }} wrapperCol={{ span: 14 }}>
-        {emailField}
-        {submitButton("Reset Password")}
+        <Card>
+          {titleField("Reset Password")}
+          {emailField}
+          {submitButton("Reset Password")}
+        </Card>
       </Form>
     </div>
   );
