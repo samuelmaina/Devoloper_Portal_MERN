@@ -1,11 +1,11 @@
-const mongoose = require("mongoose");
-const { confirmPassword } = require("./utils");
+import mongoose from "mongoose";
+
+import { confirmPassword } from "./utils";
+import { auth as ranges } from "../constrains";
 
 const Schema = mongoose.Schema;
 
-const ranges = require("../constraints").auth;
-
-const baseOptions = {
+const baseOptions: object = {
   discrimatorKeys: "memberToAuth",
   collection: "",
 };
@@ -47,7 +47,7 @@ const Auth = new Schema(
 
 const { statics, methods } = Auth;
 
-statics.createOne = async function (data) {
+statics.createOne = async function (data: object) {
   const result = deleteIdFromData(data);
   let newMember = new this(result);
   await newMember.save();
@@ -59,6 +59,7 @@ statics.findOneByEmail = function (email) {
 };
 
 statics.findOneWithCredentials = async function (email, password) {
+  //@ts-ignore
   const doc = await this.findOneByEmail(email);
   if (doc) {
     const doMatch = await doc.isPasswordCorrect(password);
@@ -75,8 +76,8 @@ methods.delete = async function () {
   return await this.deleteOne();
 };
 
-function deleteIdFromData(data) {
-  const result = {};
+function deleteIdFromData(data: any) {
+  const result: any = {};
   for (const key in data) {
     if (key === "_id") {
       continue;
@@ -84,4 +85,4 @@ function deleteIdFromData(data) {
   }
   return result;
 }
-module.exports = mongoose.model("Auth", Auth);
+export default mongoose.model("Auth", Auth);

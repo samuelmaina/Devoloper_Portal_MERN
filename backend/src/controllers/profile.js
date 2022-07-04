@@ -1,7 +1,13 @@
+import { NextFunction, Request, Response } from "express";
+
 const { Profile } = require("../models");
 const { Responder } = require("../utils");
 
-exports.getUserProfile = async (req, res, next) => {
+export const getUserProfile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const responder = new Responder(res);
     const profile = await Profile.findOneWithUserId(req.user.id);
@@ -19,7 +25,11 @@ exports.getUserProfile = async (req, res, next) => {
   }
 };
 
-exports.updateProfile = async (req, res, next) => {
+export const updateProfile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const responder = new Responder(res);
 

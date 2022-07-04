@@ -1,7 +1,7 @@
 const router = require("express").Router();
 
 const { profile } = require("../../controllers");
-const { auth } = require("../../middlewares/");
+const { auth } = require("../../middlewares");
 
 const { ensureUserIsAuth } = auth;
 const { getUserProfile, updateProfile } = profile;

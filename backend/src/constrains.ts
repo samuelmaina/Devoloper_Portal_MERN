@@ -1,7 +1,7 @@
-exports.auth = {
+export const auth = {
   name: {
     minlength: 2,
-    maxlenght: 20,
+    maxlength: 20,
   },
   email: {
     minlength: 5,
@@ -9,7 +9,7 @@ exports.auth = {
   },
 };
 
-exports.token = {
+export const token = {
   requester: {
     maxlength: 50,
     minlength: 2,

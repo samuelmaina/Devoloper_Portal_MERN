@@ -1,8 +1,9 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-const { hashPassword } = require("./utils");
+import { hashPassword } from "./utils";
 
-const ranges = require("../constraints").auth;
+import { auth as ranges } from "../constrains";
+
 const Schema = mongoose.Schema;
 
 const UnVerified = new Schema({
@@ -38,8 +39,17 @@ const UnVerified = new Schema({
 
 const { statics, methods } = UnVerified;
 
-statics.createOne = async function (data) {
+interface IUnVerified extends Document {
+  name: string;
+  email: string;
+  password: string;
+  avatar?: string;
+  type: string;
+}
+
+statics.createOne = async function (data: any) {
   const hashedPassword = await hashPassword(data.password);
+  // @ts-ignore
   const doc = new this(data);
   doc.password = hashedPassword;
   return doc.save();
@@ -49,4 +59,4 @@ statics.findOneByEmail = async function (email) {
   return await this.findOne({ email });
 };
 
-module.exports = mongoose.model("UnVerified", UnVerified);
+export default mongoose.model<IUnVerified>("UnVerified", UnVerified);

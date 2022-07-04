@@ -4,8 +4,8 @@ const { hash } = require("bcrypt");
 
 const assert = require("assert");
 
-const { connectToDb } = require("../../src/models/utils");
-const { Auth } = require("../../src/models");
+const { connectToDb } = require("../../source/models/utils");
+const { Auth } = require("../../source/models");
 
 exports.connectToTestDb = async () => {
   await connectToDb(process.env.MONGO_TEST_URI);

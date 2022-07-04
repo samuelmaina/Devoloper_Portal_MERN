@@ -1,11 +1,13 @@
-const mongoose = require("mongoose");
-const crypto = require("crypto");
-const { TOKEN_VALIDITY_IN_HOURS } = require("../config");
-const { token } = require("../constraints");
+import mongoose from "mongoose";
+import crypto from "crypto";
+
+import { TOKEN_VALIDITY_IN_HOURS } from "../config";
+import { token } from "../constrains";
 
 const Schema = mongoose.Schema;
 
-const tokenValidityPeriodInMs = 1000 * 60 * 60 * TOKEN_VALIDITY_IN_HOURS;
+const tokenValidityPeriodInMs: number =
+  1000 * 60 * 60 * TOKEN_VALIDITY_IN_HOURS;
 
 const TokenGenerator = new Schema({
   requester: {
@@ -32,6 +34,10 @@ TokenGenerator.index(
   },
   { expireAfterSeconds: TOKEN_VALIDITY_IN_HOURS * 3600 }
 );
+
+interface IToken extends Document {
+  requester: string;
+}
 const { statics, methods } = TokenGenerator;
 
 statics.createOne = async function (requester) {
@@ -58,4 +64,4 @@ methods.delete = async function () {
   await this.deleteOne();
 };
 
-module.exports = mongoose.model("Token", TokenGenerator);
+export default mongoose.model<IToken>("Token", TokenGenerator);

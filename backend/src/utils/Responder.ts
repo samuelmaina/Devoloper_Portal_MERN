@@ -1,25 +1,30 @@
+import { Response } from "express";
+
 class Responder {
-  constructor(res) {
+  _res: Response;
+  _body: any;
+  _status: number = 200;
+  constructor(res: Response) {
     this._res = res;
     this._body = {};
   }
-  withStatusCode(status) {
+  withStatusCode(status: number) {
     this._status = status;
     return this;
   }
-  attachFieldToBody(field, value) {
+  attachFieldToBody(field: string, value: any) {
     this._body[field] = value;
     return this;
   }
-  withMessage(msg) {
+  withMessage(msg: string) {
     return this.attachFieldToBody("message", msg);
   }
 
-  withError(err) {
+  withError(err: string) {
     return this.attachFieldToBody("error", err);
   }
   /** Attaches many fields in an object to the res body. */
-  attachDataToResBody(data) {
+  attachDataToResBody(data: any) {
     for (const field in data) {
       if (data.hasOwnProperty.call(data, field)) {
         this.attachFieldToBody(field, data[field]);
@@ -40,10 +45,10 @@ class Responder {
   }
 }
 
-const rejectIfIsNullOrUndefinedWithMessage = (value, message) => {
+const rejectIfIsNullOrUndefinedWithMessage = (value: any, message: string) => {
   if (typeof value === "undefined" || value === null) {
     throw new Error(message);
   }
 };
 
-module.exports = Responder;
+export default Responder;

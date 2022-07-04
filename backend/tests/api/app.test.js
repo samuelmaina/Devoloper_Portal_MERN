@@ -1,5 +1,5 @@
-const { BASE_URL, PORT } = require("../../src/config");
-const { UnVerified, User, TokenGenerator } = require("../../src/models");
+const { BASE_URL, PORT } = require("../../source/config");
+const { UnVerified, User, TokenGenerator } = require("../../source/models");
 const { clearDb } = require("../models/utils");
 const { ensureNotNull } = require("../utils/matchers");
 
