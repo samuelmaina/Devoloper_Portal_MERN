@@ -1,67 +1,70 @@
-import mongoose from "mongoose";
+import { Sequelize, Model, DataTypes, Op } from "sequelize";
+
 import crypto from "crypto";
 
 import { TOKEN_VALIDITY_IN_HOURS } from "../config";
 import { token } from "../constrains";
 
-const Schema = mongoose.Schema;
-
 const tokenValidityPeriodInMs: number =
   1000 * 60 * 60 * TOKEN_VALIDITY_IN_HOURS;
 
-const TokenGenerator = new Schema({
-  requester: {
-    type: String,
-    required: true,
-    minlength: token.requester.minlength,
-    maxlength: token.requester.maxlength,
-  },
+import { sequelize } from ".";
 
-  token: {
-    type: String,
-    maxlength: [token.howLong.exact, " token too long."],
-    minlength: [token.howLong.exact, "token too short"],
-  },
-  expiryTime: {
-    type: Date,
-    min: Date.now(),
-  },
-});
-
-TokenGenerator.index(
+const TokenGenerator = sequelize.define(
+  "tokenGenerator",
   {
-    expiryTime: 1,
+    requester: {
+      type: DataTypes.STRING(token.requester.maxlength),
+      validate: {
+        isEmail: true,
+      },
+      allowNull: false,
+      unique: true,
+    },
+    token: {
+      type: DataTypes.STRING(token.howLong.exact),
+      validate: { isAlphanumeric: true },
+      allowNull: false,
+      unique: true,
+    },
+    expiryTime: {
+      type: DataTypes.DATE,
+      defaultValue: Date.now() + tokenValidityPeriodInMs,
+    },
   },
-  { expireAfterSeconds: TOKEN_VALIDITY_IN_HOURS * 3600 }
+  { timestamps: true }
 );
 
-interface IToken extends Document {
-  requester: string;
-}
-const { statics, methods } = TokenGenerator;
+//@ts-ignore
+TokenGenerator.createOne = async function (requester: string) {
+  const existing = await this.findOne({
+    where: {
+      requester,
+    },
+  });
 
-statics.createOne = async function (requester) {
-  const existingRequesters = await this.find({ requester });
-  if (existingRequesters.length > 0) {
-    return existingRequesters[0];
-  }
-  const tokenDetails = new this({
+  if (existing) return existing;
+
+  let newMember = this.create({
     requester,
     token: crypto.randomBytes(token.howLong.exact / 2).toString("hex"),
-    expiryTime: Date.now() + tokenValidityPeriodInMs,
   });
-  await tokenDetails.save();
-  return tokenDetails;
+  return newMember;
 };
-
-statics.findTokenDetailsByToken = async function (token) {
+//@ts-ignore
+TokenGenerator.findTokenDetailsByToken = async function (token) {
   return await this.findOne({
-    token,
-    expiryTime: { $gt: Date.now() },
+    where: {
+      token,
+      expiryTime: { [Op.gte]: Date.now() },
+    },
   });
 };
-methods.delete = async function () {
-  await this.deleteOne();
+
+TokenGenerator.prototype.delete = async function () {
+  return await this.deleteOne();
 };
 
-export default mongoose.model<IToken>("Token", TokenGenerator);
+TokenGenerator.sync();
+
+export default TokenGenerator;
