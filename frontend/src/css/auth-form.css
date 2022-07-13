@@ -1,0 +1,13 @@
+.container{
+    display: flex;
+    left:33%;
+    align-items: center;
+    flex-direction: column;
+}
+
+.form{
+    border: 0px rgb(115, 115, 181) solid;
+    margin-top: 2%;
+    width: 30%;
+    padding:2rem;
+}
