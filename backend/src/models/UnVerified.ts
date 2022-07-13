@@ -1,62 +1,80 @@
-import mongoose from "mongoose";
+import { Sequelize, Model, DataTypes } from "sequelize";
 
-import { hashPassword } from "./utils";
+import { sequelize } from ".";
 
+import { confirmPassword, hashPassword } from "./utils";
 import { auth as ranges } from "../constrains";
 
-const Schema = mongoose.Schema;
+const UnVerified = sequelize.define(
+  "unverified",
+  {
+    name: {
+      type: DataTypes.STRING(ranges.name.maxlength),
+      validate: {
+        min: 3,
+      },
 
-const UnVerified = new Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true,
-    minlength: ranges.name.minlength,
-    maxlength: ranges.name.maxlength,
+      allowNull: false,
+      unique: true,
+    },
+    email: {
+      type: DataTypes.STRING(ranges.email.maxlength),
+      validate: { isEmail: true },
+      allowNull: false,
+      unique: true,
+    },
+    password: {
+      type: DataTypes.STRING(80),
+      allowNull: false,
+    },
+    avatar: {
+      type: DataTypes.STRING(60),
+      allowNull: true,
+    },
   },
-  email: {
-    type: String,
-    required: true,
-    trim: true,
-    lowercase: true,
-    minlength: ranges.email.minlength,
-    maxlength: ranges.email.maxlength,
-  },
-  password: {
-    type: String,
-    required: true,
-    maxlength: 80,
-    minlength: 10,
-  },
-  avatar: {
-    type: String,
-  },
-  type: {
-    type: String,
-    required: true,
-  },
-});
+  { timestamps: true }
+);
 
-const { statics, methods } = UnVerified;
+//@ts-ignore
+UnVerified.createOne = async function (data: any) {
+  data.password = await hashPassword(data.password);
+  const result = deleteIdFromData(data);
+  console.log(result);
+  let newMember = await this.create(result);
+  return newMember;
+};
+//@ts-ignore
+UnVerified.findOneByEmail = function (email: string) {
+  return this.findOne({ where: { email } });
+};
+//@ts-ignore
+UnVerified.findOneWithCredentials = async function (
+  email: string,
+  password: string
+) {
+  //@ts-ignore
+  const doc = await this.findOneByEmail(email);
+  if (doc) {
+    const doMatch = await doc.isPasswordCorrect(password);
+    if (doMatch) return doc;
+    return null;
+  }
+  return null;
+};
 
-interface IUnVerified extends Document {
-  name: string;
-  email: string;
-  password: string;
-  avatar?: string;
-  type: string;
+UnVerified.prototype.delete = async function () {
+  return await this.deleteOne();
+};
+
+function deleteIdFromData(data: any) {
+  const result: any = {};
+  for (const key in data) {
+    if (key === "_id") {
+      continue;
+    } else result[key] = data[key];
+  }
+  return result;
 }
 
-statics.createOne = async function (data: any) {
-  const hashedPassword = await hashPassword(data.password);
-  // @ts-ignore
-  const doc = new this(data);
-  doc.password = hashedPassword;
-  return doc.save();
-};
-
-statics.findOneByEmail = async function (email) {
-  return await this.findOne({ email });
-};
-
-export default mongoose.model<IUnVerified>("UnVerified", UnVerified);
+UnVerified.sync();
+export default UnVerified;
