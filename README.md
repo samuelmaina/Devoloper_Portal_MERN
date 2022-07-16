@@ -7,4 +7,4 @@ Still under development
 
 ## Technologies.
 - Started with the normal JS and MongoDb but latter changed to work with TypeScript and Postgres.
-- React , Express, TYpescript, Jest and Postgres
+- React , Express, Typescript, Jest and Postgres
