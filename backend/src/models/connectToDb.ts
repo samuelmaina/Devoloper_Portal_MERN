@@ -1,11 +1,11 @@
 import { Sequelize } from "sequelize";
 
-import { DATABASE } from "../config";
+import { DATABASE, PASSWORD } from "../config";
 
 const connectToDb = () => {
   try {
     const user: string = "postgres";
-    const password: string = "postgres1234";
+    const password: string = PASSWORD;
     const port: number = 5432;
     return new Sequelize(DATABASE, user, password, {
       host: "localhost",

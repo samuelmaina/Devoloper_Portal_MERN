@@ -1,64 +1,50 @@
-import mongoose from "mongoose";
+import { Sequelize, Model, DataTypes } from "sequelize";
+
+import { sequelize } from ".";
 
 import { confirmPassword } from "./utils";
 import { auth as ranges } from "../constrains";
 
-const Schema = mongoose.Schema;
-
-const baseOptions: object = {
-  discrimatorKeys: "memberToAuth",
-  collection: "",
-};
-
-const Auth = new Schema(
+const Auth = sequelize.define(
+  "client",
   {
     name: {
-      type: String,
-      required: true,
-      trim: true,
-      minlength: ranges.name.minlength,
-      maxlength: ranges.name.maxlength,
+      type: DataTypes.STRING(ranges.name.maxlength),
+      validate: {
+        isAlpha: true,
+      },
+      allowNull: false,
+      unique: true,
     },
     email: {
-      type: String,
-      required: true,
-      trim: true,
-      lowercase: true,
-      minlength: ranges.email.minlength,
-      maxlength: ranges.email.maxlength,
+      type: DataTypes.STRING(ranges.email.maxlength),
+      validate: { isEmail: true },
+      allowNull: false,
+      unique: true,
     },
     password: {
-      type: String,
-      required: true,
-      maxlength: 80,
-      minlength: 10,
-    },
-
-    avatar: {
-      type: String,
-    },
-    joiningDate: {
-      type: Date,
-      default: Date.now(),
+      type: DataTypes.STRING(80),
+      validate: {
+        is: /^[0-9a-f]{64}$/i,
+      },
+      allowNull: false,
     },
   },
-  baseOptions
+  { timestamps: true }
 );
 
-const { statics, methods } = Auth;
-
-statics.createOne = async function (data: object) {
+//@ts-ignore
+Auth.createOne = async function (data: object) {
   const result = deleteIdFromData(data);
-  let newMember = new this(result);
-  await newMember.save();
+  let newMember = this.create(result);
   return newMember;
 };
-
-statics.findOneByEmail = function (email) {
-  return this.findOne({ email });
+//@ts-ignore
+Auth.findOneByEmail = function (email: string) {
+  return this.findOne({ where: { email } });
 };
-
-statics.findOneWithCredentials = async function (email, password) {
+//@ts-ignore
+Auth.findOneWithCredentials = async function (email: string, password: string) {
   //@ts-ignore
   const doc = await this.findOneByEmail(email);
   if (doc) {
@@ -69,10 +55,10 @@ statics.findOneWithCredentials = async function (email, password) {
   return null;
 };
 
-methods.isPasswordCorrect = async function (plain) {
+Auth.prototype.isPasswordCorrect = async function (plain: string) {
   return await confirmPassword(plain, this.password);
 };
-methods.delete = async function () {
+Auth.prototype.delete = async function () {
   return await this.deleteOne();
 };
 
@@ -85,4 +71,4 @@ function deleteIdFromData(data: any) {
   }
   return result;
 }
-export default mongoose.model("Auth", Auth);
+export default Auth;
