@@ -52,11 +52,14 @@ export default {
       data.type = type;
       //@ts-ignore
       await UnVerified.createOne(data);
+      console.log(data);
+      await createOneForType(type, data);
       await emailSender(emailBody);
+
       return responder
         .withStatusCode(201)
         .withMessage(
-          "Sign Up successful.A link has been sent to your email. Click on it to verify your account."
+          "Sign Up successful.A link has been sent to your email. Click on it to verify your account. The verification is not required for normal login but may be required in future."
         )
         .send();
     } catch (error) {
@@ -75,7 +78,6 @@ export default {
         const email = tokenDetails.requester;
         //@ts-ignore
         const details = await UnVerified.findOneByEmail(email);
-        await createOneForType(details.type, details);
         await details.delete();
         await tokenDetails.delete();
         return responder
@@ -100,7 +102,14 @@ export default {
       const type = params.type;
       const { email, password } = body;
 
+      //@ts-ignore
+      let existingEmail = await UnVerified.findOneByEmail(email);
+
+      console.log(type, email, password);
+
       const details = await findOneWithCredentialsByType(type, email, password);
+
+      console.log(details);
       if (details) {
         const payload = {
           id: details.id,
@@ -113,6 +122,7 @@ export default {
               success: true,
               auth: type,
               token: "Bearer " + token,
+              isVerified: existingEmail ? true : false,
             };
             responder.withStatusCode(201).attachDataToResBody(data).send();
           } catch (error) {
