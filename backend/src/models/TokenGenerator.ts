@@ -62,7 +62,7 @@ TokenGenerator.findTokenDetailsByToken = async function (token) {
 };
 
 TokenGenerator.prototype.delete = async function () {
-  return await this.deleteOne();
+  return await this.destroy();
 };
 
 TokenGenerator.sync();

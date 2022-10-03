@@ -1,1 +1,1 @@
-exports.ensureUserIsAuth = require("./ensureUserAuth");
+export { default as ensureUserAuth } from "./ensureUserAuth";

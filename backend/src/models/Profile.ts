@@ -2,8 +2,6 @@ import { DataTypes } from "sequelize";
 
 import { sequelize, User } from ".";
 
-import { auth as ranges } from "../constrains";
-
 const Profile = sequelize.define(
   "profile",
   {
@@ -12,19 +10,19 @@ const Profile = sequelize.define(
       allowNull: false,
       unique: true,
     },
-    compnay: {
+    company: {
       type: DataTypes.STRING(50),
-      allowNull: false,
+      allowNull: true,
     },
     website: {
       type: DataTypes.STRING(20),
       validate: {
         isUrl: true,
       },
-      allowNull: false,
+      allowNull: true,
     },
     location: {
-      type: DataTypes.ARRAY(DataTypes.FLOAT(10)),
+      type: DataTypes.STRING(20),
       allowNull: false,
     },
     status: {
@@ -41,6 +39,7 @@ const Profile = sequelize.define(
     },
     githubusername: {
       type: DataTypes.STRING(50),
+      allowNull: false,
     },
     //@ts-ignore
     experience: {

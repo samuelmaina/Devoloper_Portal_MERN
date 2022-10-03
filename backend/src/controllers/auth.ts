@@ -105,11 +105,8 @@ export default {
       //@ts-ignore
       let existingEmail = await UnVerified.findOneByEmail(email);
 
-      console.log(type, email, password);
-
       const details = await findOneWithCredentialsByType(type, email, password);
 
-      console.log(details);
       if (details) {
         const payload = {
           id: details.id,

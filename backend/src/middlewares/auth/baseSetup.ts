@@ -1,14 +1,19 @@
-const passportJWT = require("passport-jwt");
-const { SESSION_SECRET } = require("../../config");
+import passportJWT from "passport-jwt";
+
+import { SESSION_SECRET } from "../../config";
+
 const { Strategy, ExtractJwt } = passportJWT;
 
-const opts = {};
+const opts: any = {};
+
+//@ts-ignore
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = SESSION_SECRET;
 
-module.exports = (passport, Model, passportName) => {
-  const local = new Strategy(opts, async (payload, done) => {
-    const { name, id, email } = await Model.findById(payload.id);
+export default (passport: any, Model: any, passportName: string) => {
+  const local = new Strategy(opts, async (payload: object, done: Function) => {
+    //@ts-ignore
+    const { name, id, email } = await Model.findByPk(payload.id);
     const data = { name, id, email };
     done(null, data);
   });

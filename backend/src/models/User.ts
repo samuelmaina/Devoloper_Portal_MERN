@@ -10,9 +10,6 @@ const User = sequelize.define(
   {
     name: {
       type: DataTypes.STRING(ranges.name.maxlength),
-      validate: {
-        isAlpha: true,
-      },
       allowNull: false,
       unique: true,
     },
@@ -24,9 +21,6 @@ const User = sequelize.define(
     },
     password: {
       type: DataTypes.STRING(80),
-      validate: {
-        is: /^[0-9a-f]{64}$/i,
-      },
       allowNull: false,
     },
   },

@@ -1,5 +1,6 @@
-const { User } = require("../../models");
+import { User } from "../../models";
 
-const guard = require("./baseAuth");
-const name = "jwt";
-module.exports = guard(User, name);
+import guard from "./baseAuth";
+
+const name: string = "jwt";
+export default guard(User, name);

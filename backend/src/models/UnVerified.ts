@@ -63,7 +63,7 @@ UnVerified.findOneWithCredentials = async function (
 };
 
 UnVerified.prototype.delete = async function () {
-  return await this.deleteOne();
+  return await this.destroy();
 };
 
 function deleteIdFromData(data: any) {

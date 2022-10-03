@@ -1,10 +1,10 @@
-const passport = require("passport");
-const { Model } = require("mongoose");
+import passport from "passport";
 
-const baseSetup = require("./baseSetup");
+import baseSetup from "./baseSetup";
+
 const stragegy = "jwt";
 
-module.exports = (Model:, passportName: string) => {
+export default (Model: any, passportName: string) => {
   baseSetup(passport, Model, passportName);
   const config = {
     session: false,

@@ -1,7 +1,12 @@
 import express, { Router } from "express";
+
+import { ensureUserAuth } from "../../middlewares/auth";
+
+import profile from "./profile";
+
 import auth from "./auth";
 
-const router: Router = express.Router();
+const router = express.Router();
 
 // const profile = require("./profile");
 
@@ -9,5 +14,5 @@ const router: Router = express.Router();
 
 router.use("/auth", auth);
 // router.use("/post", post);
-// router.use("/profile", profile);
+router.use("/profile", ensureUserAuth, profile);
 export default router;

@@ -1,9 +1,8 @@
 import dotenv from "dotenv";
-import mongoose from "mongoose";
+import mongoose, { connect } from "mongoose";
 import { hash } from "bcrypt";
 import assert from "assert";
-
-import { connectToDb } from "../../src/models/utils";
+import connectToDb from "../../src/models/connectToDb";
 import { Auth } from "../../src/models";
 dotenv.config();
 
@@ -11,7 +10,7 @@ let sequalize: any;
 
 export const connectToTestDb = async () => {
   //@ts-ignore
-  sequalize = connectToDb(process.env.MONGO_TEST_URI);
+  sequalize = connectToDb();
 };
 export const disconnectFromTestDb = async () => {
   await sequalize.close();
