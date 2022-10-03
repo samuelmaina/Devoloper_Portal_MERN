@@ -1,12 +1,10 @@
-const { hash } = require("bcrypt");
-const Auth = require("../../src/models/Auth");
+import { hash } from "bcrypt";
 
-const { ensureEqual, ensureNull, ensureTruthy } = require("../utils/matchers");
-const {
-  includeSetUpAndTearDowns,
-  clearDb,
-  createTestDocs,
-} = require("./utils");
+import { Auth } from "../../src/models";
+
+import { ensureEqual, ensureNull, ensureTruthy } from "../utils/matchers";
+
+import { includeSetUpAndTearDowns, clearDb, createTestDocs } from "./utils";
 
 const plain = "pa55Word??";
 describe("Auth Model", () => {
@@ -23,6 +21,9 @@ describe("Auth Model", () => {
         password: plain,
         avatar: "/path/to/email/avatar",
       };
+      //planned to add interfaces for the Auth model so that typescript does not throw for the createOne method but for now will just
+      //ignore the error with ts-ignore.
+      // @ts-ignore
       const doc = await Auth.createOne(data);
 
       ensureDocHasTheRightData(doc, data);
@@ -32,20 +33,21 @@ describe("Auth Model", () => {
       it("should return  doc with the given email if the doc exists", async () => {
         const data = await createTestDocs();
         const data3 = data.data3;
+        // @ts-ignore
         const found = await Auth.findOneByEmail(data3.email);
         ensureDocHasTheRightData(found, data3);
       });
       it("should return null when there is no doc with that email", async () => {
         await createTestDocs();
+        //@ts-ignore
         const found = await Auth.findOneByEmail("someEmail@gmail.com");
         ensureNull(found);
       });
     });
 
     describe("findOneWithCredentials", () => {
-      let data;
-
-      let plain;
+      let data: any;
+      let plain: string;
       beforeAll(async () => {
         data = await createTestDocs();
         plain = data.plain;
@@ -54,15 +56,20 @@ describe("Auth Model", () => {
         const data3 = data.data3;
 
         const { email } = data3;
+        //@ts-ignore
+
         const doc = await Auth.findOneWithCredentials(email, plain);
         ensureDocHasTheRightData(doc, data3);
       });
+
       it("should return null when email is wrong", async () => {
+        //@ts-ignore
         const doc = await Auth.findOneWithCredentials("some@email.com", plain);
         ensureNull(doc);
       });
       it("should return null  when password is wrong", async () => {
         const data3 = data.data3;
+        //@ts-ignore
         const doc = await Auth.findOneWithCredentials(
           data3.email,
           "randompassword"
@@ -81,12 +88,13 @@ describe("Auth Model", () => {
         password: hashed,
         avatar: "/path/to/email/avatar1",
       };
+      //@ts-ignore
       const doc = await Auth.createOne(data1);
       ensureTruthy(await doc.isPasswordCorrect(plain));
     });
   });
 });
-function ensureDocHasTheRightData(doc, expected) {
+function ensureDocHasTheRightData(doc: any, expected: any) {
   ensureEqual(doc.name, expected.name);
   ensureEqual(doc.email, expected.email);
 

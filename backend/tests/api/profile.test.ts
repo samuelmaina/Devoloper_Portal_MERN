@@ -1,167 +1,168 @@
-const { hash } = require("bcrypt");
-const { PORT } = require("../../src/config");
+// import { hash } from "bcrypt";
+// import { PORT } from "../../src/config";
 
-const { User, Profile } = require("../../src/models");
-const { clearDb, createTestDocs } = require("../models/utils");
-const {
-  ensureNotNull,
-  ensureNull,
-  ensureEqual,
-  ensureValueGreaterThanOrEqual,
-  ensureIdsEqual,
-} = require("../utils/matchers");
+// import { User, Profile } from "../../src/models";
 
-const {
-  closeApp,
-  startApp,
-  ensureHasStatusAndError,
-  ensureHasStatusAndMessage,
-  ensureResHasStatusCodeAndFieldData,
-  ensureResHasStatusCodeAndProp,
-  Requester,
-} = require("./utils");
+// import { clearDb, createTestDocs } from "../models/utils";
+// import {
+//   ensureNotNull,
+//   ensureNull,
+//   ensureEqual,
+//   ensureValueGreaterThanOrEqual,
+//   ensureIdsEqual,
+// } from "../utils/matchers";
 
-describe("Profile routers tests.", () => {
-  let requester;
+// import {
+//   closeApp,
+//   startApp,
+//   ensureHasStatusAndError,
+//   ensureHasStatusAndMessage,
+//   ensureResHasStatusCodeAndFieldData,
+//   ensureResHasStatusCodeAndProp,
+//   Requester,
+// } from "./utils";
 
-  beforeAll(async () => {
-    const app = await startApp(PORT);
-    requester = new Requester(app);
-  });
-  afterAll(async () => {
-    await closeApp();
-  });
-  afterEach(async () => {
-    await clearDb();
-  });
+// describe.skip("Profile routers tests.", () => {
+//   let requester: any;
 
-  describe("creating a new profile", () => {
-    const url = "/api/profile/";
-    it("should refuse when the user is not logged in", async () => {
-      token = "Bearer abkljrklejklejrkljeklrejjrklejr";
-      const res = await requester.makeAuthorizedPostRequest(url, token);
-      ensureEqual(res.status, 401);
-    });
+//   beforeAll(async () => {
+//     const app = await startApp(PORT);
+//     requester = new Requester(app);
+//   });
+//   afterAll(async () => {
+//     await closeApp();
+//   });
+//   afterEach(async () => {
+//     await clearDb();
+//   });
 
-    it("should create profile", async () => {
-      const data = {
-        handle: "handle1",
-        company: "abc",
-        website: "www.example.com",
-        location: "test_location",
-        status: "junior",
-        skills: ["html, css, node.js, java"],
-        bio: "Sample text that will act as bio.",
-        githubusername: "github/johndoe",
-        experience: [
-          {
-            title: "junior dev",
-            company: "Aura Safira",
-            location: "Nairobi",
-            from: new Date("December 17, 2020"),
-            to: new Date("December 25, 2021"),
-            description: "The good company",
-          },
-        ],
-        education: [
-          {
-            school: "Moi University ",
-            fieldOfStudy: "Computer Science",
-            location: "Uasin Gishu",
-            from: new Date("December 17, 2020"),
-            to: new Date("December 25, 2021"),
-            description: "The good school",
-          },
-        ],
-      };
+//   describe("creating a new profile", () => {
+//     const url = "/api/profile/";
+//     it("should refuse when the user is not logged in", async () => {
+//       token = "Bearer abkljrklejklejrkljeklrejjrklejr";
+//       const res = await requester.makeAuthorizedPostRequest(url, token);
+//       ensureEqual(res.status, 401);
+//     });
 
-      const { token, user } = await loginUser();
-      const res = await requester.makeAuthorizedPostRequest(url, token, data);
-      ensureHasStatusAndMessage(res, 200, "Profile created successfully.");
+//     it("should create profile", async () => {
+//       const data = {
+//         handle: "handle1",
+//         company: "abc",
+//         website: "www.example.com",
+//         location: "test_location",
+//         status: "junior",
+//         skills: ["html, css, node.js, java"],
+//         bio: "Sample text that will act as bio.",
+//         githubusername: "github/johndoe",
+//         experience: [
+//           {
+//             title: "junior dev",
+//             company: "Aura Safira",
+//             location: "Nairobi",
+//             from: new Date("December 17, 2020"),
+//             to: new Date("December 25, 2021"),
+//             description: "The good company",
+//           },
+//         ],
+//         education: [
+//           {
+//             school: "Moi University ",
+//             fieldOfStudy: "Computer Science",
+//             location: "Uasin Gishu",
+//             from: new Date("December 17, 2020"),
+//             to: new Date("December 25, 2021"),
+//             description: "The good school",
+//           },
+//         ],
+//       };
 
-      const created = await Profile.findOneWithUserId(user.id);
-      ensureNotNull(created);
-      ensureEqual(String(created.user), String(user.id));
-    });
-  });
+//       const { token, user } = await loginUser();
+//       const res = await requester.makeAuthorizedPostRequest(url, token, data);
+//       ensureHasStatusAndMessage(res, 200, "Profile created successfully.");
 
-  describe("get current profile", () => {
-    const url = "/api/profile/";
-    it("should refuse when the user is not logged in", async () => {
-      token = "Bearer abkljrklejklejrkljeklrejjrklejr";
-      const res = await requester.makeAuthorizedGetRequest(url, token);
-      ensureEqual(res.status, 401);
-    });
+//       const created = await Profile.findOneWithUserId(user.id);
+//       ensureNotNull(created);
+//       ensureEqual(String(created.user), String(user.id));
+//     });
+//   });
 
-    it("should return an notification message if the currrent user does not have a profile", async () => {
-      const { token } = await loginUser();
-      const res = await requester.makeAuthorizedGetRequest(url, token);
-      ensureHasStatusAndError(
-        res,
-        404,
-        "You don't have any profile yet.Consider creating one."
-      );
-    });
+//   describe("get current profile", () => {
+//     const url = "/api/profile/";
+//     it("should refuse when the user is not logged in", async () => {
+//       token = "Bearer abkljrklejklejrkljeklrejjrklejr";
+//       const res = await requester.makeAuthorizedGetRequest(url, token);
+//       ensureEqual(res.status, 401);
+//     });
 
-    it("return the profile details for the user if the profile exists.", async () => {
-      const { token, user } = await loginUser();
+//     it("should return an notification message if the currrent user does not have a profile", async () => {
+//       const { token } = await loginUser();
+//       const res = await requester.makeAuthorizedGetRequest(url, token);
+//       ensureHasStatusAndError(
+//         res,
+//         404,
+//         "You don't have any profile yet.Consider creating one."
+//       );
+//     });
 
-      const data = {
-        user: user.id,
-        handle: "handle1",
-        company: "abc",
-        website: "www.example.com",
-        location: "test_location",
-        status: "junior",
-        skills: ["html, css, node.js, java"],
-        bio: "Sample text that will act as bio.",
-        githubusername: "github/johndoe",
-        experience: [
-          {
-            title: "junior dev",
-            company: "Aura Safira",
-            location: "Nairobi",
-            from: new Date("December 17, 2020"),
-            to: new Date("December 25, 2021"),
-            description: "The good company",
-          },
-        ],
-        education: [
-          {
-            school: "Moi University ",
-            fieldOfStudy: "Computer Science",
-            location: "Uasin Gishu",
-            from: new Date("December 17, 2020"),
-            to: new Date("December 25, 2021"),
-            description: "The good school",
-          },
-        ],
-      };
+//     it("return the profile details for the user if the profile exists.", async () => {
+//       const { token, user } = await loginUser();
 
-      await Profile.createOne(data);
+//       const data = {
+//         user: user.id,
+//         handle: "handle1",
+//         company: "abc",
+//         website: "www.example.com",
+//         location: "test_location",
+//         status: "junior",
+//         skills: ["html, css, node.js, java"],
+//         bio: "Sample text that will act as bio.",
+//         githubusername: "github/johndoe",
+//         experience: [
+//           {
+//             title: "junior dev",
+//             company: "Aura Safira",
+//             location: "Nairobi",
+//             from: new Date("December 17, 2020"),
+//             to: new Date("December 25, 2021"),
+//             description: "The good company",
+//           },
+//         ],
+//         education: [
+//           {
+//             school: "Moi University ",
+//             fieldOfStudy: "Computer Science",
+//             location: "Uasin Gishu",
+//             from: new Date("December 17, 2020"),
+//             to: new Date("December 25, 2021"),
+//             description: "The good school",
+//           },
+//         ],
+//       };
 
-      const res = await requester.makeAuthorizedGetRequest(url, token);
-      ensureEqual(res.status, 200);
-      ensureIdsEqual(res.body.user, user.id);
-    });
-  });
+//       await Profile.createOne(data);
 
-  async function loginUser() {
-    const plain = "Pass55word??5";
-    const data = {
-      email: "johndoe@email.com",
-      name: "John Doe",
-      password: await hash(plain, 12),
-      avatar: "path/to/some/email",
-    };
-    const user = await User.createOne(data);
+//       const res = await requester.makeAuthorizedGetRequest(url, token);
+//       ensureEqual(res.status, 200);
+//       ensureIdsEqual(res.body.user, user.id);
+//     });
+//   });
 
-    const url = "/api/auth/log-in/user";
+//   async function loginUser() {
+//     const plain = "Pass55word??5";
+//     const data = {
+//       email: "johndoe@email.com",
+//       name: "John Doe",
+//       password: await hash(plain, 12),
+//       avatar: "path/to/some/email",
+//     };
+//     const user = await User.createOne(data);
 
-    //revert data back to plain the the  password in the request will be a plain password.
-    data.password = plain;
+//     const url = "/api/auth/log-in/user";
 
-    const res = await requester.makePostRequest(url, data);
-    return { token: res.body.token, user };
-  }
-});
+//     //revert data back to plain the the  password in the request will be a plain password.
+//     data.password = plain;
+
+//     const res = await requester.makePostRequest(url, data);
+//     return { token: res.body.token, user };
+//   }
+// });

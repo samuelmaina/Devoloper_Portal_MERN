@@ -1,29 +1,31 @@
-require("dotenv").config();
-const mongoose = require("mongoose");
-const { hash } = require("bcrypt");
+import dotenv from "dotenv";
+import mongoose from "mongoose";
+import { hash } from "bcrypt";
+import assert from "assert";
 
-const assert = require("assert");
+import { connectToDb } from "../../src/models/utils";
+import { Auth } from "../../src/models";
+dotenv.config();
 
-const { connectToDb } = require("../../source/models/utils");
-const { Auth } = require("../../source/models");
+let sequalize: any;
 
-exports.connectToTestDb = async () => {
-  await connectToDb(process.env.MONGO_TEST_URI);
+export const connectToTestDb = async () => {
+  //@ts-ignore
+  sequalize = connectToDb(process.env.MONGO_TEST_URI);
 };
-
-exports.disconnectFromTestDb = async () => {
-  await mongoose.connection.close();
+export const disconnectFromTestDb = async () => {
+  await sequalize.close();
 };
-exports.includeSetUpAndTearDowns = () => {
+export const includeSetUpAndTearDowns = () => {
   beforeAll(async () => {
-    await this.connectToTestDb();
+    await connectToTestDb();
   });
   afterAll(async () => {
-    await this.disconnectFromTestDb();
+    await disconnectFromTestDb();
   });
 };
 
-exports.clearModel = async (Model) => {
+export const clearModel = async (Model: any) => {
   const noOfDocs = async () => {
     return await Model.find().countDocuments();
   };
@@ -36,7 +38,7 @@ exports.clearModel = async (Model) => {
   );
 };
 
-exports.clearDb = async () => {
+export const clearDb = async () => {
   try {
     const Models = mongoose.modelNames();
     for (const ModelName of Models) {
@@ -47,7 +49,7 @@ exports.clearDb = async () => {
       };
       let count = await getNoOfDocs();
       if (count > 0) {
-        await this.clearModel(Model);
+        await clearModel(Model);
       }
       count = await getNoOfDocs();
       assert.strictEqual(count, 0, "deletion not complete");
@@ -57,11 +59,11 @@ exports.clearDb = async () => {
   }
 };
 
-exports.generateRandomMongooseId = () => {
-  return mongoose.Types.ObjectId();
+export const generateRandomMongooseId = () => {
+  return new mongoose.Types.ObjectId();
 };
 
-exports.createTestDocs = async function () {
+export const createTestDocs = async function () {
   const plain = "somePassword55??";
   const hashed = await hash(plain, 12);
   let data1 = {
@@ -83,8 +85,12 @@ exports.createTestDocs = async function () {
     password: hashed,
     avatar: "/path/to/email/avatar3",
   };
+  //@ts-ignore
   await Auth.createOne(data1);
+  //@ts-ignore
+
   await Auth.createOne(data2);
+  //@ts-ignore
   await Auth.createOne(data3);
   return { data1, data2, data3, plain };
 };

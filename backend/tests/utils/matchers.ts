@@ -1,27 +1,30 @@
-exports.ensureEqual = (actual, expected) => {
+export const ensureEqual = (actual: any, expected: any) => {
   expect(actual).toEqual(expected);
 };
 
-exports.ensureIdsEqual = (actual, expected) => {
+export const ensureIdsEqual = (actual: string, expected: string) => {
   expect(actual.toString()).toBe(expected.toString());
 };
 
-exports.ensureTruthy = (predicate) => {
+export const ensureTruthy = (predicate: boolean) => {
   expect(predicate).toBeTruthy();
 };
 
-exports.ensureFalsy = (predicate) => {
+export const ensureFalsy = (predicate: boolean) => {
   expect(predicate).toBeFalsy();
 };
 
-exports.ensureNull = (value) => {
+export const ensureNull = (value: any) => {
   expect(value).toBeNull();
 };
-exports.ensureNotNull = (value) => {
+export const ensureNotNull = (value: any) => {
   expect(value).not.toBeNull();
   expect(value).not.toBeUndefined();
 };
 
-exports.ensureValueGreaterThanOrEqual = (value1, value2) => {
+export const ensureValueGreaterThanOrEqual = (
+  value1: number,
+  value2: number
+) => {
   expect(value1).toBeGreaterThanOrEqual(value2);
 };

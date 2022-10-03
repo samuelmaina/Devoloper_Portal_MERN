@@ -1,11 +1,14 @@
-const request = require("supertest");
-const app = require("../../source/app");
-const { connectToTestDb, disconnectFromTestDb } = require("../models/utils");
-const { ensureEqual } = require("../utils/matchers");
+import request from "supertest";
 
-let server;
+import app from "../../src/app";
 
-exports.startApp = async (PORT) => {
+import { connectToTestDb, disconnectFromTestDb } from "../models/utils";
+
+import { ensureEqual } from "../utils/matchers";
+
+let server: any;
+
+exports.startApp = async (PORT: number) => {
   await connectToTestDb();
   server = app.listen(PORT);
   return server;
@@ -14,7 +17,7 @@ exports.closeApp = async () => {
   if (!server) {
     throw new Error("Server not started, hence can't close it");
   }
-  server.close((err) => {
+  server.close((err: string) => {
     if (err) {
       throw new Error(err);
       //although the server unlistened from the current port, it is still running,
@@ -24,48 +27,66 @@ exports.closeApp = async () => {
   await disconnectFromTestDb();
 };
 
-exports.ensureResHasStatusCodeAndFieldData = (res, statusCode, key, value) => {
+exports.ensureResHasStatusCodeAndFieldData = (
+  res: Response,
+  statusCode: number,
+  key: string,
+  value: any
+) => {
   ensureEqual(res.status, statusCode);
   expect(res.body).toHaveProperty(key, value);
 };
 
-exports.ensureResHasStatusCodeAndProp = (res, status, prop) => {
-  ensureHasStatus(res, status);
+exports.ensureResHasStatusCodeAndProp = (
+  res: Response,
+  statusCode: number,
+  prop: any
+) => {
+  ensureHasStatus(res, statusCode);
   expect(res.body).toHaveProperty(prop);
 };
 
-exports.ensureHasStatusAndError = (res, status, error) => {
+exports.ensureHasStatusAndError = (
+  res: any,
+  statusCode: number,
+  error: string
+) => {
   ensureEqual(res.body.error, error);
-  ensureHasStatus(res, status);
+  ensureHasStatus(res, statusCode);
 };
 
-exports.ensureHasStatusAndMessage = (res, status, msg) => {
+exports.ensureHasStatusAndMessage = (
+  res: any,
+  statusCode: number,
+  msg: string
+) => {
   ensureEqual(res.body.message, msg);
-  ensureHasStatus(res, status);
+  ensureHasStatus(res, statusCode);
 };
-function ensureHasStatus(res, status) {
+function ensureHasStatus(res: any, status: number) {
   ensureEqual(res.status, status);
 }
 
 class Requester {
-  constructor(app) {
+  app: any;
+  constructor(app: any) {
     this.app = app;
   }
-  async makePostRequest(url, body) {
+  async makePostRequest(url: string, body: any) {
     return await request(this.app).post(url).send(body);
   }
-  async makeGetRequest(url) {
+  async makeGetRequest(url: string) {
     return await request(this.app).get(url);
   }
 
-  async makeAuthorizedPostRequest(url, token, body) {
+  async makeAuthorizedPostRequest(url: string, token: string, body: any) {
     return await request(this.app)
       .post(url)
       .set("Authorization", token)
       .send(body);
   }
 
-  async makeAuthorizedGetRequest(url, token) {
+  async makeAuthorizedGetRequest(url: string, token: string) {
     return await request(this.app).get(url).set("Authorization", token);
   }
 }
